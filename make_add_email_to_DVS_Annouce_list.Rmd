@@ -1,0 +1,24 @@
+---
+title: "Add email to to DVS Annouce list"
+output: html_notebook
+---
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(knitr)
+```
+
+
+
+```{r produceRoster, echo=FALSE}
+
+Roster <- bind_rows(Attendees, 
+                    if("wait_list" %in% files$type){WaitList}
+)
+
+Roster %>% 
+  filter(`Would you like to receive more information about DVS events and training?` == "Yes") %>% 
+  select(Email) %>% 
+  kable()
+
+```

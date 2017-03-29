@@ -1,0 +1,63 @@
+---
+title: "Workshop Roster"
+output: word_document
+---
+
+<!-- 
+Note to Instructor
+- Use for taking attendance. 
+- to Run:  see README.md  
+  https://gitlab.oit.duke.edu/john/workshop_analytics#readme
+- Print by opening the roster.docx file in Word.
+- You many want to adjust the Layout orientation within Word by seeting 
+  to Landscape after opening and before printing.
+-->
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(knitr)
+```
+
+```{r workshop details, echo=FALSE}
+
+write.table(attendees_header, row.names=FALSE, col.names=FALSE, quote=FALSE)
+
+cat(paste0("Register: ", "http://duke.libcal.com/event/", files$course_id[1]),"\n")
+
+```
+
+---
+
+- Please place a check by in the left-most column, *Attendance* 
+- Walk-ins: (not pre-registered or on the wait-list), please write in your details  at the end of the list
+
+---
+
+```{r produceRoster, echo=FALSE}
+
+Example <- tibble(
+  `Last Name` = "Chigurh", 
+  `First Name` = "Anton", 
+  Email = "cipher@cloud.net", 
+  `Academic Status (or other)` = "Perpetual", 
+  `Discipline or Affiliation` = "Sanitation", 
+  list_type = "Example"
+  )
+
+Roster <- bind_rows(Attendees, 
+                    Example,
+                    if("wait_list" %in% files$type){WaitList}
+)
+
+Roster %>% 
+  select(`Last Name`, `First Name`, `Email`, Status = `Academic Status (or other)`, 
+         Discipline = `Discipline or Affiliation`, Registration = list_type) %>% 
+  arrange(`Last Name`) %>% 
+  mutate(Attendance = "") %>% 
+  mutate(Attendance = if_else(Status == "Perpetual", "X", Attendance)) %>% 
+  kable()
+
+```
+
+
+
