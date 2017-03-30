@@ -2,7 +2,7 @@
 
 These scripts transform springshare libcal registration data.
 
-There are two goals: transforming and automate attendance file movement.
+There are two goals: transform and automate attendance file movement.
 
 1. Transform the Springshare-registration data to produce a paper form which attendees can use to sign-in when present in a workshop
     - libcal --> Rstudio --> msWord Attendance File
