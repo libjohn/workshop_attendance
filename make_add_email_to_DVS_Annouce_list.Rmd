@@ -19,6 +19,7 @@ Roster <- bind_rows(Attendees,
 Roster %>% 
   filter(`Would you like to receive more information about DVS events and training?` == "Yes") %>% 
   select(Email) %>% 
+  arrange(Email) %>% 
   kable()
 
 ```

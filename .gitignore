@@ -11,11 +11,9 @@ rsconnect
 data/*
 
 # Output Files
-output/*
 *.docx
 *.doc
-make_add_email_to_DVS_annouce_list.nb.html
-email_list.nb.html
+*.html
 
 # Example code in package build process
 *-Ex.R
