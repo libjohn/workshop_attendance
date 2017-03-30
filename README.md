@@ -46,7 +46,7 @@ At the console:
 
 ### Upload your data as a google sheet
 
-1. login to Google Drive (upload initial upload you may be prompted in the web-browser, at Google Drive, to authorize/allow the upload.)
+1. login to Google Drive (for initial upload, you may be prompted in the web-browser, at Google Drive, to authorize/allow the upload process.)
 
 At the console:
 
