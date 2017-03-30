@@ -15,7 +15,7 @@ There are two goals: transforming and automate attendance file movement.
 - Your Springshare data files are located are inside a "data" subdirectory of the R project directory
     - project directory is identified with `getwd()`.  If not, `setwd()`
 - There are no more than three files inside the data directory
-    - one attendees file, one wait list file, one cancellations file
+    - one attendees file, one waitlist file, one cancellations file
     - the attendees file is mandatory
     - you can put each file-set in a subdirectory of the data directory.  Subdir is identified at the command line in the console (see below)
 - No user data will be uploaded to GitLab or GitHub
@@ -57,9 +57,9 @@ At the console:
 At Google Drive:
 1. Manually move the processed and uploaded registration file to Joel's predefined location
     - My Drive > Data and Visualization Services > Workshops > Spring 2017 > Assessment
-1. The [codebook](https://docs.google.com/document/d/1MzJVkMQhAespElJ-JPT8PotqGPmZesk7FbvVTNv5Fo8/edit) defines where you will manually mark attendance, wait list, and walk-ins.  You can use the paper Roster to help you complete this section.  
+1. The [codebook](https://docs.google.com/document/d/1MzJVkMQhAespElJ-JPT8PotqGPmZesk7FbvVTNv5Fo8/edit) defines where you will manually mark attendance, waitlist, and walk-ins.  You can use the paper Roster to help you complete this section.  
 
-Note:  In this iteration I added a column **list_type** which helps identify if the attendee came from the registered or wait listed column.  In the future I plan to remove this column because it's not in Joel's codebook.  **Therefore**, you must **manually delete** the *list_type* **column** after you have successfully marked the attendance in the GoogleSheet.
+Note:  In this iteration I added a column **list_type** which helps identify if the attendee came from the registered or waitlisted column.  In the future I plan to remove this column because it's not in Joel's codebook.  **Therefore**, you must **manually delete** the *list_type* **column** after you have successfully marked the attendance in the GoogleSheet.
 
 ### Add email addresses to DVS Annouce
 
