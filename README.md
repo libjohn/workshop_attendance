@@ -61,7 +61,7 @@ At Google Drive:
 
 Note:  In this iteration I added a column **list_type** which helps identify if the attendee came from the registered or waitlisted column.  In the future I plan to remove this column because it's not in Joel's codebook.  **Therefore**, you must **manually delete** the *list_type* **column** after you have successfully marked the attendance in the GoogleSheet.
 
-### Add email addresses to DVS Annouce
+### Add email addresses to DVS Announce
 
 -  Joel maintains a Google Doc for this
 
