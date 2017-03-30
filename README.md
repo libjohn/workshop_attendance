@@ -55,7 +55,7 @@ At the console:
 1. `rmarkdown::render("write_to_gs.Rmd")`
 
 At Google Drive:
-1. Manually move the processed and uploaded registration file to Joel's predefined location
+1. Manually move the processed and uploaded registration file from your MyDrive space to Joel's predefined location
     - My Drive > Data and Visualization Services > Workshops > Spring 2017 > Assessment
 1. The [codebook](https://docs.google.com/document/d/1MzJVkMQhAespElJ-JPT8PotqGPmZesk7FbvVTNv5Fo8/edit) defines where you will manually mark attendance, waitlist, and walk-ins.  You can use the paper Roster to help you complete this section.  
 
