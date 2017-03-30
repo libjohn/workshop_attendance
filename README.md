@@ -20,7 +20,7 @@ There are two goals: transform and automate attendance file movement.
     - you can put each file-set in a subdirectory of the data directory.  Subdir is identified at the command line in the console (see below)
 - No user data will be uploaded to GitLab or GitHub
 - User data on your personal machine is your responsibility
-- User Data in the GoogleSheet is protected by the Google Drive permissions that you have set
+- User data in the GoogleSheet is protected by the Google Drive permissions that you have set
 
 ## Quick Start
 
