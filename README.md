@@ -12,7 +12,7 @@ There are two goals: transform and automate attendance file movement.
 ## Assumptions:
 
 - You have already downloaded the 1-3 registration files from Springshare and have not changed the filenames
-- Your Springshare data files are located are inside a "data" subdirectory of the R project directory
+- Your Springshare data files are located inside a "data" subdirectory of the R project directory
     - project directory is identified with `getwd()`.  If not, `setwd()`
 - There are no more than three files inside the data directory
     - one attendees file, one waitlist file, one cancellations file
