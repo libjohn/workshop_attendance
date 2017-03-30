@@ -71,7 +71,7 @@ Note:  In this iteration I added a column **list_type** which helps identify if 
 
 1. `rm(list = ls(all = TRUE))`  # remove any environment variables before starting
 1. `rmarkdown::render("process_files_to_df.Rmd", params = list(dat_dir = "data"))`  # identify the data subdirectory here.  e.g. data_dir = "data/my_workshop101"
-1. `rmarkdown::render("make_add_email_to_DVS_Annouce_list.Rmd" output_file = "email_list.html")`
+1. `rmarkdown::render("make_add_email_to_DVS_Annouce_list.Rmd", output_file = "email_list.html")`
 1. Open the resulting HTML file, *email_list.html*.  Copy the addresses into your clipboard buffer
 1. Open the Google Doc, paste the clipboard butter into that file
 
