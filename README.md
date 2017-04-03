@@ -22,27 +22,27 @@ There are two goals: transform and automate attendance file movement.
 - User data on your personal machine is your responsibility
 - User data in the GoogleSheet is protected by the Google Drive permissions that you have set
 - The following R library-packages are used and must be installed in your R System
-    - process_files_to_df,Rmd
-        - library(tidyverse)
-        - library(readr)
-        - library(lubridate)
-        - library(stringr)
+    - process_files_to_df.Rmd
+        - tidyverse
+        - readr
+        - lubridate
+        - stringr
     - write_roster.Rmd
-        - library(tidyverse)
-        - library(knitr)
+        - tidyverse
+        - knitr
     - write_to_gs.Rmd
-        - library(googlesheets)
-        - library(tidyverse)
+        - googlesheets
+        - tidyverse
     - make_add_email_to_DVS_Annouce_list.Rmd
-        - library(tidyverse)
-        - library(knitr)
+        - tidyverse
+        - knitr
 
 ## Quick Start
 
 ### Make a "data" subdirectory
 
 1. Fork this repository
-1. From the Files pane > New Folder > data
+1. [In RStudio,] From the Files pane > New Folder > data
 1. Download your Springshare registration data to your newly created data directory
 
 
