@@ -28,7 +28,7 @@ cat(paste0("Register: ", "http://duke.libcal.com/event/", files$course_id[1]),"\
 
 ---
 
-- Please place a check by in the left-most column, *Attendance* 
+- Please place a check by in the right-most column, *Attendance* 
 - Walk-ins: (not pre-registered or on the wait-list), please write in your details  at the end of the list
 
 ---

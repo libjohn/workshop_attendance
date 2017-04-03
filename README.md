@@ -21,6 +21,21 @@ There are two goals: transform and automate attendance file movement.
 - No user data will be uploaded to GitLab or GitHub
 - User data on your personal machine is your responsibility
 - User data in the GoogleSheet is protected by the Google Drive permissions that you have set
+- The following R library-packages are used and must be installed in your R System
+    - process_files_to_df,Rmd
+        - library(tidyverse)
+        - library(readr)
+        - library(lubridate)
+        - library(stringr)
+    - write_roster.Rmd
+        - library(tidyverse)
+        - library(knitr)
+    - write_to_gs.Rmd
+        - library(googlesheets)
+        - library(tidyverse)
+    - make_add_email_to_DVS_Annouce_list.Rmd
+        - library(tidyverse)
+        - library(knitr)
 
 ## Quick Start
 
@@ -43,8 +58,10 @@ At the console:
 
 - The output will be an MS Word File found in the root project directory (`getwd()`)
 - Windows (and maybe Mac) will nee to install [Pandoc](http://pandoc.org/installing.html) for this procedure to work
+- Print by opening the roster.docx file in Word
+- You many want to adjust the Layout orientation within Word by setting the orientation to Landscape
 
-### Upload your data as a google sheet
+### Upload your data as a Google Sheet
 
 1. login to Google Drive (for initial upload, you may be prompted in the web-browser, at Google Drive, to authorize/allow the upload process.)
 
@@ -58,6 +75,8 @@ At Google Drive:
 1. Manually move the processed and uploaded registration file from your MyDrive space to Joel's predefined location
     - My Drive > Data and Visualization Services > Workshops > Spring 2017 > Assessment
 1. The [codebook](https://docs.google.com/document/d/1MzJVkMQhAespElJ-JPT8PotqGPmZesk7FbvVTNv5Fo8/edit) defines where you will manually mark attendance, waitlist, and walk-ins.  You can use the paper Roster to help you complete this section.  
+
+Note: The process of uploading the files can take several minutes.  The length of time seems to be related to the length of the list and whether this is the first upload session of your day.  In my experience, the more files I uploaded, the quicker the upload transaction (Hmm, that's a suspect experience.  It might just be the larger the number of rows, the longer the upload transaction.  More testing required).  
 
 Note:  In this iteration I added a column **list_type** which helps identify if the attendee came from the registered or waitlisted column.  In the future I plan to remove this column because it's not in Joel's codebook.  **Therefore**, you must **manually delete** the *list_type* **column** after you have successfully marked the attendance in the GoogleSheet.
 
@@ -73,5 +92,5 @@ Note:  In this iteration I added a column **list_type** which helps identify if 
 1. `rmarkdown::render("process_files_to_df.Rmd", params = list(dat_dir = "data"))`  # identify the data subdirectory here.  e.g. data_dir = "data/my_workshop101"
 1. `rmarkdown::render("make_add_email_to_DVS_Annouce_list.Rmd", output_file = "email_list.html")`
 1. Open the resulting HTML file, *email_list.html*.  Copy the addresses into your clipboard buffer
-1. Open the Google Doc, paste the clipboard buffer into that file
+1. Open the Google Doc, paste the clipboard buffer into that file.  Paste without formatting.
 
