@@ -39,11 +39,11 @@ There are two goals: transform and automate attendance file movement.
 
 ## Quick Start
 
-### Make Attendance Roster
+### A. Make Attendance Roster
 
 1. `source("csv-to-df_make-attendance-roster.r")`
 
-### Write Roster to Google-Drive, then Mark Attendance
+### B. Write Roster to Google-Drive, then Mark Attendance
 
 **Transform libcal files** (which you manually downloaded), **write to Google Drive** (to manually), **produce dvs-annouce list** (to manually append).
 
