@@ -138,3 +138,15 @@ if("cancelled" %in% files$type){
                         col_names = FALSE, trim = TRUE, 
                         verbose = TRUE)
 }
+
+## Get email list as .csv -- to paste into dvs-announce list
+
+Roster <- bind_rows(Attendees, 
+                    if("wait_list" %in% files$type){WaitList}
+)
+
+Roster %>% 
+  filter(`Would you like to receive more information about DVS events and training?` == "Yes") %>% 
+  select(Email) %>% 
+  arrange(Email) %>% 
+  write_delim("outfile/dvs-announce_append-email.txt")

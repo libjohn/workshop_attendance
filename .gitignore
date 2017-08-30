@@ -9,6 +9,7 @@ rsconnect
 # Session Data files
 .RData
 data/*
+outfile/*
 
 # Output Files
 *.docx
