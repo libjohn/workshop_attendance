@@ -49,7 +49,9 @@ There are two goals: transform and automate attendance file movement.
     - At the console, run the script: `csv-to-df_write-to-gs.r`
     - This converts your data to a Google Sheet in your Google Drive space.  See [At Google Drive](#upload-your-data-as-a-google-sheet) section for next steps.
     
-### Next Development Step for "Quck Start".  Add the [Email Parsing](#add-email-addresses-to-dvs-announce) to the `csv-to-df_write-to-gs.r` script.  Will probably use `write_csv` -- or some-such similar command -- to generate a .csv outfile.
+### Next Development Step for "Quck Start".  
+
+Add the [Email Parsing](#add-email-addresses-to-dvs-announce) to the `csv-to-df_write-to-gs.r` script.  Will probably use `write_csv` -- or some-such similar command -- to generate a .csv outfile.
 
 
 ## Long Version
