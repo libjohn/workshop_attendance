@@ -41,7 +41,7 @@ There are two goals: transform and automate attendance file movement.
 
 ### Make Attendance Roster
 
-1. `source("csv-to-df_make-attendance-roster.r")
+1. `source("csv-to-df_make-attendance-roster.r")`
 
 ### Write Roster to Google-Drive, then Mark Attendance
 
