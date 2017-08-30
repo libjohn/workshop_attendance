@@ -39,7 +39,13 @@ There are two goals: transform and automate attendance file movement.
 
 ## Quick Start
 
-### **Transform libcal files** (which you manually downloaded), **write to Google Drive** (to manually), **produce dvs-annouce list** (to manually append)
+### Make Attendance Roster
+
+1. `source("csv-to-df_make-attendance-roster.r")
+
+### Write Roster to Google-Drive, then Mark Attendance
+
+**Transform libcal files** (which you manually downloaded), **write to Google Drive** (to manually), **produce dvs-annouce list** (to manually append).
 
 1. First, download your data from LibCal; place data inside the `data` directory of your RStudio Project 
     
@@ -57,11 +63,8 @@ There are two goals: transform and automate attendance file movement.
         
     1. Produces a txt file with list of email addresses
     
-        - See [email to DVS steps 4 & 5](#add-email-addresses-to-dvs-announce)  to complete this manual process
-    
-### Next Development Step for "Quick Start".  
-
-Create a source-file script to generate the paper attendance roster.
+        - The txt file can be found in the 'outfile' subdirectory of the RStudio Project
+        - See [Add email addresses to DVS -- steps 4 & 5](#add-email-addresses-to-dvs-announce)  to complete this manual process
 
 
 ## Long Version
