@@ -41,23 +41,20 @@ There are two goals: transform and automate attendance file movement.
 
 1. Get libcal files, transform and write to Google Drive
 
-    - First, download your data from LibCal; place data inside the data directory of your RStudio Project (make a data directory inside this project, if you have not already done so.)
+    - First, download your data from LibCal; place data inside the `data` directory of your RStudio Project 
     
         - You can also make subdirectories inside the data directory but will need to modify line 10 of the script
         
     - Open RStudio with Console as your active quadrant
     - At the console, run the script: `csv-to-df_write-to-gs.r`
-    - This converts your data to a Google Sheet in your Google Drive space.  See [At Google Drive](##upload-your-data-as-a-google-sheet) section for next steps.
+    - This converts your data to a Google Sheet in your Google Drive space.  See [At Google Drive](#upload-your-data-as-a-google-sheet) section for next steps.
     
-1. Get email addresses and add to DVS Annouce file
-
-
-
+### Next Development Step for "Quck Start".  Add the [Email Parsing](#add-email-addresses-to-dvs-announce) to the `csv-to-df_write-to-gs.r` script.  Will probably use `write_csv` -- or some-such similar command -- to generate a .csv outfile.
 
 
 ## Long Version
 
-Note you can run either the "Long version" commands **or** the "Quick Start".  
+**Note:** you can run either the "Long version" commands **or** the "Quick Start".  
 
 ### Make a "data" subdirectory
 
