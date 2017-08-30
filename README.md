@@ -47,7 +47,7 @@ There are two goals: transform and automate attendance file movement.
         
     - Open RStudio with Console as your active quadrant
     - At the console, run the script: `csv-to-df_write-to-gs.r`
-    - This converts your data to a Google Sheet in your Google Drive space.  See [At Google Drive](#upload-your-data-as-a-google-sheet) section for next steps.
+    - This converts your data to a Google Sheet in your Google Drive space.  See [At Google Drive](#at-google-drive) section for next steps.
     
 ### Next Development Step for "Quck Start".  
 
@@ -84,13 +84,13 @@ At the console:
 
 1. login to Google Drive (for initial upload, you may be prompted in the web-browser, at Google Drive, to authorize/allow the upload process.)
 
-At the console:
+#### At the console:
 
 1. `rm(list = ls(all = TRUE))`  # remove any environment variables before starting
 1. `rmarkdown::render("process_files_to_df.Rmd", params = list(dat_dir = "data"))`  # identify the data subdirectory here.  e.g. data_dir = "data/my_workshop101"
 1. `rmarkdown::render("write_to_gs.Rmd")`
 
-At Google Drive:
+#### At Google Drive:
 1. Manually move the processed and uploaded registration file from your MyDrive space to Joel's predefined location
     - My Drive > Data and Visualization Services > Workshops > Spring 2017 > Assessment
 1. The [codebook](https://docs.google.com/document/d/1MzJVkMQhAespElJ-JPT8PotqGPmZesk7FbvVTNv5Fo8/edit) defines where you will manually mark attendance, waitlist, and walk-ins.  You can use the paper Roster to help you complete this section.  
