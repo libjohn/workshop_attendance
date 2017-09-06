@@ -1,4 +1,18 @@
-## README
+# README
+
+
+## Quick Start
+
+Put your LibCal Registration Data in a the `data` subdirectory
+
+- `source("csv-to-df_make-attendance-roster.r")`
+- `source("csv-to-df_write-to-gs.r")`
+
+Look in `outfile` subdirectory for output.
+
+---
+
+## Goal of these scripts
 
 These scripts transform springshare libcal registration data.
 
@@ -36,16 +50,6 @@ There are two goals: transform and automate attendance file movement.
     - make_add_email_to_DVS_Annouce_list.Rmd
         - tidyverse
         - knitr
-
-## Quick Start
-
-Put your LibCal Registration Data in a the `data` subdirectory
-
-- `source("csv-to-df_make-attendance-roster.r")`
-- `source("csv-to-df_write-to-gs.r")`
-
-Look in `outfile` subdirectory for output.
-
 
 ## Step By Step Directions
 
