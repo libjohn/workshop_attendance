@@ -39,6 +39,13 @@ There are two goals: transform and automate attendance file movement.
 
 ## Quick Start
 
+### Make a "data" and "outfile" subdirectory 
+
+1. Fork this repository
+1. [In RStudio,] From the Files pane > New Folder > `data`
+1. Repeat step above for `outfile`
+1. Download your Springshare registration data to your newly created `data` directory
+
 ### A. Make Attendance Roster
 
 1. First, download your data from LibCal; place data inside the `data` directory of your RStudio Project 
@@ -80,63 +87,4 @@ There are two goals: transform and automate attendance file movement.
         - The txt file can be found in the 'outfile' subdirectory of the RStudio Project
         - See [Add email addresses to DVS -- steps 4 & 5](#add-email-addresses-to-dvs-announce)  to complete this manual process
 
-
-## Long Version
-
-**Note:** you can run either the "Long version" commands **or** the "Quick Start".  
-
-### Make a "data" subdirectory
-
-1. Fork this repository
-1. [In RStudio,] From the Files pane > New Folder > data
-1. Download your Springshare registration data to your newly created data directory
-
-
-### Produce an attendance roster
-
-At the console:
-
-1. `rm(list = ls(all = TRUE))`  # remove any environment variables before starting
-1. `rmarkdown::render("process_files_to_df.Rmd", params = list(dat_dir = "data"))`  # identify the data subdirectory here.  e.g. data_dir = "data/my_workshop101"
-1. `rmarkdown::render("write_roster.Rmd", output_file = "roster.docx")`
-
-&nbsp;
-
-- The output will be an MS Word File found in the root project directory (`getwd()`)
-- Windows (and maybe Mac) will nee to install [Pandoc](http://pandoc.org/installing.html) for this procedure to work
-- Print by opening the roster.docx file in Word
-- You many want to adjust the Layout orientation within Word by setting the orientation to Landscape
-
-### Upload your data as a Google Sheet
-
-1. login to Google Drive (for initial upload, you may be prompted in the web-browser, at Google Drive, to authorize/allow the upload process.)
-
-#### At the console:
-
-1. `rm(list = ls(all = TRUE))`  # remove any environment variables before starting
-1. `rmarkdown::render("process_files_to_df.Rmd", params = list(dat_dir = "data"))`  # identify the data subdirectory here.  e.g. data_dir = "data/my_workshop101"
-1. `rmarkdown::render("write_to_gs.Rmd")`
-
-#### At Google Drive:
-1. Manually move the processed and uploaded registration file from your MyDrive space to Joel's predefined location
-    - My Drive > Data and Visualization Services > Workshops > Spring 2017 > Assessment
-1. The [codebook](https://docs.google.com/document/d/1MzJVkMQhAespElJ-JPT8PotqGPmZesk7FbvVTNv5Fo8/edit) defines where you will manually mark attendance, waitlist, and walk-ins.  You can use the paper Roster to help you complete this section.  
-
-Note: The process of uploading the files can take several minutes.  The length of time seems to be related to the length of the list and whether this is the first upload session of your day.  In my experience, the more files I uploaded, the quicker the upload transaction (Hmm, that's a suspect experience.  It might just be the larger the number of rows, the longer the upload transaction.  More testing required).  
-
-Note:  In this iteration I added a column **list_type** which helps identify if the attendee came from the registered or waitlisted column.  In the future I plan to remove this column because it's not in Joel's codebook.  **Therefore**, you must **manually delete** the *list_type* **column** after you have successfully marked the attendance in the GoogleSheet.
-
-### Add email addresses to DVS Announce
-
--  Joel maintains a Google Doc for this
-
-    - Google Drive > Data and Visualization Services > workshops > Spring 2017 > Assessment
-
--  All you need to do is generate a list of email addresses, 1 per line, of those who ask to be added to the list
-
-1. `rm(list = ls(all = TRUE))`  # remove any environment variables before starting
-1. `rmarkdown::render("process_files_to_df.Rmd", params = list(dat_dir = "data"))`  # identify the data subdirectory here.  e.g. data_dir = "data/my_workshop101"
-1. `rmarkdown::render("make_add_email_to_DVS_Annouce_list.Rmd", output_file = "email_list.html")`
-1. Open the resulting HTML file, *email_list.html*.  Copy the addresses into your clipboard buffer
-1. Open the Google Doc, paste the clipboard buffer into that file.  Paste without formatting.
 
