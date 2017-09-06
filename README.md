@@ -52,9 +52,7 @@ There are two goals: transform and automate attendance file movement.
     
     - You can also make subdirectories inside the data directory but will need to modify line 10 of the script
         
-1. Open RStudio with Console as your active quadrant
-
-1. At the console, run the script:
+1. Open RStudio with Console as your active quadrant.  At the console, run the script:
 
     - `source("csv-to-df_make-attendance-roster.r")`
     
@@ -66,25 +64,31 @@ There are two goals: transform and automate attendance file movement.
 
 ### B. Write Roster to Google-Drive, then Mark Attendance
 
-**Transform libcal files** (which you manually downloaded), **write to Google Drive** (to manually), **produce dvs-annouce list** (to manually append).
+This script will **Transform libcal files** (which you manually downloaded), **write to Google Drive** (to manually), **produce dvs-annouce list** (to manually append).
 
 1. First, download your data from LibCal; place data inside the `data` directory of your RStudio Project 
     
     - You can also make subdirectories inside the data directory but will need to modify line 10 of the script
         
-1. Open RStudio with Console as your active quadrant
+1. Open RStudio with Console as your active quadrant.  At the console, run the script: 
 
-1. At the console, run the script: `source("csv-to-df_write-to-gs.r")`
+    - `source("csv-to-df_write-to-gs.r")`
 
-1. This script does two things...
 
-    1. Converts your attendance to a Google Sheet in your Google Drive space.  
-    
-        - See [At Google Drive](#at-google-drive) section to complete this manual process
+
+#### This Roster script does two things...
+
+1. Converts your attendance to a Google Sheet in your Google Drive space.  
+
+    - See [At Google Drive](#at-google-drive) section to complete this manual process
         
-    1. Produces a txt file with list of email addresses
+1. Produces a txt file with list of email addresses
+
+    - The txt file can be found in the `outfile` subdirectory of the RStudio Project
     
-        - The txt file can be found in the 'outfile' subdirectory of the RStudio Project
-        - See [Add email addresses to DVS -- steps 4 & 5](#add-email-addresses-to-dvs-announce)  to complete this manual process
+    &nbsp;
+    
+    1. Open the resulting HTML file, *email_list.html*.  Copy the addresses into your clipboard buffer
+    1. Open the Google Doc, paste the clipboard buffer into that file.  Paste without formatting.
 
 
