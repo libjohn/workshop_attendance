@@ -39,6 +39,16 @@ There are two goals: transform and automate attendance file movement.
 
 ## Quick Start
 
+Put your LibCal Registration Data in a the `data` subdirectory
+
+- `source("csv-to-df_make-attendance-roster.r")`
+- `source("csv-to-df_write-to-gs.r")`
+
+Look in `outfile` subdirectory for output.
+
+
+## Step By Step Directions
+
 ### Make a "data" and "outfile" subdirectory 
 
 1. Fork this repository
@@ -62,7 +72,7 @@ There are two goals: transform and automate attendance file movement.
     - Format with "Format As Table" Option
     - Print Options:  Landscape Orientation, and **Scaling** set to "Fit All Columns on One Page"
 
-### B. Write Roster to Google-Drive, then Mark Attendance
+### B. Write Roster to Google-Drive, then Mark Attendance.  Add Email Addresses to DVS-Announce
 
 This script will **Transform libcal files** (which you manually downloaded), **write to Google Drive** (to manually), **produce dvs-annouce list** (to manually append).
 
@@ -82,13 +92,13 @@ This script will **Transform libcal files** (which you manually downloaded), **w
 
     - See [At Google Drive](#at-google-drive) section to complete this manual process
         
-1. Produces a txt file with list of email addresses
+1. Produces an Email Addresses to DVS-Announce txt file
 
-    - The txt file can be found in the `outfile` subdirectory of the RStudio Project
+    - The `dvs-announce_append-email.txt` file can be found in the `outfile` subdirectory of the RStudio Project
     
     &nbsp;
     
     1. Open the resulting HTML file, *email_list.html*.  Copy the addresses into your clipboard buffer
-    1. Open the Google Doc, paste the clipboard buffer into that file.  Paste without formatting.
+    1. Open the DVS Announce Google Doc, paste the clipboard buffer into that file.  Paste without formatting.
 
 
