@@ -128,7 +128,12 @@ if("wait_list" %in% files$type){
 ## Write Roster as a .txt file
 
 attendees_header %>% 
-  write_excel_csv("outfile/attendance-roster.csv")
+  write_excel_csv("outfile/attendance-roster.csv", col_names = FALSE)
+
+# add blank line
+blank <-  as_tibble(" ")
+blank %>% 
+  write_excel_csv("outfile/attendance-roster.csv", append = TRUE)
 
 #cat(paste0("Register: ", 
 #           "http://duke.libcal.com/event/", 
@@ -160,4 +165,4 @@ Roster %>%
   mutate(Attendance = if_else(Status == "Perpetual", 
                               "X", Attendance)) %>% 
   write_excel_csv("outfile/attendance-roster.csv", 
-                  append = TRUE)
+                  append = TRUE, col_names = TRUE)

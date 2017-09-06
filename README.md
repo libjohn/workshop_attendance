@@ -41,7 +41,21 @@ There are two goals: transform and automate attendance file movement.
 
 ### A. Make Attendance Roster
 
-1. `source("csv-to-df_make-attendance-roster.r")`
+1. First, download your data from LibCal; place data inside the `data` directory of your RStudio Project 
+    
+    - You can also make subdirectories inside the data directory but will need to modify line 10 of the script
+        
+1. Open RStudio with Console as your active quadrant
+
+1. At the console, run the script:
+
+    - `source("csv-to-df_make-attendance-roster.r")`
+    
+1. Look in the `outfile` subdirectory to find your output:  `attendance-roster.csv`
+
+    - Open In MS Excel
+    - Format with "Format As Table" Option
+    - Print Options:  Landscape Orientation, and **Scaling** set to "Fit All Columns on One Page"
 
 ### B. Write Roster to Google-Drive, then Mark Attendance
 
