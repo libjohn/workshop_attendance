@@ -149,4 +149,4 @@ Roster %>%
   filter(`Would you like to receive more information about DVS events and training?` == "Yes") %>% 
   select(Email) %>% 
   arrange(Email) %>% 
-  write_delim("outfile/dvs-announce_append-email.txt")
+  write_delim("outfile/dvs-announce_append-email.txt", col_names = FALSE)
