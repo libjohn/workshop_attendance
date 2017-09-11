@@ -90,8 +90,7 @@ forGoogleDrive_attendees <- Attendees %>%
          `Discipline or Affiliation`,
          `Institutes, Initiatives, or Program Affiliation`,
          `Where did you hear about this event?`,
-         `Have you consulted with Data and Visualization Services before this workshop?`,
-         `Would you like to receive more information about DVS events and training?`)
+         `Have you consulted with Data and Visualization Services before this workshop?`)
 
 if("wait_list" %in% files$type){
   forGoogleDrive_WaitList <- WaitList %>% 
@@ -108,8 +107,7 @@ if("wait_list" %in% files$type){
            `Discipline or Affiliation`,
            `Institutes, Initiatives, or Program Affiliation`,
            `Where did you hear about this event?`,
-           `Have you consulted with Data and Visualization Services before this workshop?`,
-           `Would you like to receive more information about DVS events and training?`)
+           `Have you consulted with Data and Visualization Services before this workshop?`)
 }
 
 
