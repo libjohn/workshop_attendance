@@ -34,7 +34,7 @@ attendees_file_path <- files %>%
 
 Attendees <- read_csv(attendees_file_path$file_name, 
                       skip=9) %>% 
-  mutate(`Registration Status` = "attendee") %>% 
+  mutate(list_type = "attendee") %>% 
   mutate(WorkshopID = attendees_file_path$course_id)
 
 attendees_header <- read_csv(attendees_file_path$file_name, 
@@ -49,7 +49,7 @@ if("wait_list" %in% files$type){
   
   WaitList <- read_csv(wl_file_path$file_name, 
                        skip=9)%>% 
-    mutate("Registration Status" = "wait_list") %>% 
+    mutate(list_type = "wait list") %>% 
     mutate(WorkshopID = wl_file_path$course_id)
 }  
 
@@ -82,14 +82,11 @@ forGoogleDrive_attendees <- Attendees %>%
   mutate("Attended" = "") %>% 
   mutate("Walk-in" = "") %>% 
   mutate("Waitlist" = "") %>% 
-  mutate(`Booking Made` = `Booking made`) %>% 
-  mutate(`Are you from Duke University, Duke Medical Center, DCRI, or other Duke affiliated group?` = `Are you affiliated with Duke University?`) %>% 
-  mutate("Academic Status" = `Academic Status (or other)`) %>% 
-  select(`Attended`, `Registration Status`, `Workshop Date`,
+  select(`Attended`, `Walk-in`, `Waitlist`, list_type, `Workshop Date`,
          `Workshop Name`, `WorkshopID`, `First Name`,
-         `Last Name`, `Email`, `Booking Made`, 
-         `Are you from Duke University, Duke Medical Center, DCRI, or other Duke affiliated group?`,
-         `Academic Status`,
+         `Last Name`, `Email`, `Booking made`, 
+         `Are you affiliated with Duke University?`,
+         `Academic Status (or other)`,
          `Discipline or Affiliation`,
          `Institutes, Initiatives, or Program Affiliation`,
          `Where did you hear about this event?`,
@@ -103,14 +100,11 @@ if("wait_list" %in% files$type){
     mutate("Attended" = "") %>% 
     mutate("Walk-in" = "") %>% 
     mutate("Waitlist" = "") %>% 
-    mutate(`Booking Made` = `Booking made`) %>% 
-    mutate(`Are you from Duke University, Duke Medical Center, DCRI, or other Duke affiliated group?` = `Are you affiliated with Duke University?`) %>% 
-    mutate("Academic Status" = `Academic Status (or other)`) %>% 
-    select(`Attended`, `Registration Status`, `Workshop Date`,
+    select(`Attended`, `Walk-in`, `Waitlist`, list_type, `Workshop Date`,
            `Workshop Name`, `WorkshopID`, `First Name`,
-           `Last Name`, `Email`, `Booking Made`, 
-           `Are you from Duke University, Duke Medical Center, DCRI, or other Duke affiliated group?`,
-           `Academic Status`,
+           `Last Name`, `Email`, `Booking made`, 
+           `Are you affiliated with Duke University?`,
+           `Academic Status (or other)`,
            `Discipline or Affiliation`,
            `Institutes, Initiatives, or Program Affiliation`,
            `Where did you hear about this event?`,
