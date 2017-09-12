@@ -131,8 +131,12 @@ if("wait_list" %in% files$type){
 }
 
 
+
 ### Write to GoogleDrive 
-test1_ss <- gs_new(forGoogleDrive_attendees$`Workshop Name`[1], ws_title = "RegistrationsWaitlist", 
+filename <- paste0(forGoogleDrive_attendees$`Workshop Name`[1], 
+                   "_", eventDate)
+
+test1_ss <- gs_new(filename, ws_title = filename, 
                    input = forGoogleDrive_attendees, col_names = TRUE,
                    trim = TRUE, verbose = TRUE)
 
