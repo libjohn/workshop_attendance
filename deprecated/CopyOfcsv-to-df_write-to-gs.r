@@ -34,7 +34,7 @@ attendees_file_path <- files %>%
 
 Attendees <- read_csv(attendees_file_path$file_name, 
                       skip=9) %>% 
-  mutate(`Registration Status` = "Registered") %>% 
+  mutate(`Registration Status` = "attendee") %>% 
   mutate(WorkshopID = attendees_file_path$course_id)
 
 attendees_header <- read_csv(attendees_file_path$file_name, 
@@ -49,7 +49,7 @@ if("wait_list" %in% files$type){
   
   WaitList <- read_csv(wl_file_path$file_name, 
                        skip=9)%>% 
-    mutate("Registration Status" = "Waitlist") %>% 
+    mutate("Registration Status" = "wait_list") %>% 
     mutate(WorkshopID = wl_file_path$course_id)
 }  
 
