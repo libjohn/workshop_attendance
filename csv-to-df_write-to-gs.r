@@ -79,14 +79,15 @@ eventDate <- mdy(
 forGoogleDrive_attendees <- Attendees %>% 
   mutate("Workshop Name" = eventMetaData_attendees$Event) %>% 
   mutate("Workshop Date" = as.character(eventDate)) %>% 
-  mutate("Attended" = "") %>% 
+  mutate(`Attended (x or blank)` = "") %>% 
+  rename(`Registration Status (Registered, Waitlist, or Walk-in)` = "Registration Status") %>% 
   mutate("Walk-in" = "") %>% 
   mutate("Waitlist" = "") %>% 
   mutate(`Booking Made` = `Booking made`) %>% 
   mutate(`Are you from Duke University, Duke Medical Center, DCRI, or other Duke affiliated group?` = `Are you affiliated with Duke University?`) %>% 
-  mutate("Academic Status" = `Academic Status (or other)`) %>% 
-  select(`Attended`, `Registration Status`, `Workshop Date`,
-         `Workshop Name`, `WorkshopID`, `First Name`,
+  rename("Academic Status" = `Academic Status (or other)`) %>% 
+  select(`Attended (x or blank)`, `Registration Status (Registered, Waitlist, or Walk-in)`, 
+         `Workshop Date`, `Workshop Name`, `WorkshopID`, `First Name`,
          `Last Name`, `Email`, `Booking Made`, 
          `Are you from Duke University, Duke Medical Center, DCRI, or other Duke affiliated group?`,
          `Academic Status`,
@@ -100,14 +101,15 @@ if("wait_list" %in% files$type){
   forGoogleDrive_WaitList <- WaitList %>% 
     mutate("Workshop Name" = eventMetaData_attendees$Event) %>% 
     mutate("Workshop Date" = as.character(eventDate)) %>% 
-    mutate("Attended" = "") %>% 
+    mutate(`Attended (x or blank)` = "") %>% 
+    rename(`Registration Status (Registered, Waitlist, or Walk-in)` = "Registration Status") %>% 
     mutate("Walk-in" = "") %>% 
     mutate("Waitlist" = "") %>% 
     mutate(`Booking Made` = `Booking made`) %>% 
     mutate(`Are you from Duke University, Duke Medical Center, DCRI, or other Duke affiliated group?` = `Are you affiliated with Duke University?`) %>% 
-    mutate("Academic Status" = `Academic Status (or other)`) %>% 
-    select(`Attended`, `Registration Status`, `Workshop Date`,
-           `Workshop Name`, `WorkshopID`, `First Name`,
+    rename("Academic Status" = `Academic Status (or other)`) %>% 
+    select(`Attended (x or blank)`, `Registration Status (Registered, Waitlist, or Walk-in)`, 
+           `Workshop Date`, `Workshop Name`, `WorkshopID`, `First Name`,
            `Last Name`, `Email`, `Booking Made`, 
            `Are you from Duke University, Duke Medical Center, DCRI, or other Duke affiliated group?`,
            `Academic Status`,
