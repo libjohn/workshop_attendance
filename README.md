@@ -104,11 +104,10 @@ This script will **Transform libcal files** (which you manually downloaded), **w
         
 ##### At Google Drive:
 1. Manually move the processed and uploaded registration file from your MyDrive space to Joel's predefined location
-    - My Drive > Data and Visualization Services > Workshops > Spring 2017 > Assessment
+    - `My Drive > Data and Visualization Services > Workshops > [Spring 2017] > Assessment`
 1. The [codebook](https://docs.google.com/document/d/1MzJVkMQhAespElJ-JPT8PotqGPmZesk7FbvVTNv5Fo8/edit) defines where you will manually mark attendance, waitlist, and walk-ins.  You can use the paper Roster to help you complete this section.  
 
 Note: The process of uploading the files can take several minutes.  The length of time seems to be related to the length of the list and whether this is the first upload session of your day.  In my experience, the more files I uploaded, the quicker the upload transaction (Hmm, that's a suspect experience.  It might just be the larger the number of rows, the longer the upload transaction.  More testing required).  
 
-Note:  In this iteration I added a column **list_type** which helps identify if the attendee came from the registered or waitlisted column.  In the future I plan to remove this column because it's not in Joel's codebook.  **Therefore**, you must **manually delete** the *list_type* **column** after you have successfully marked the attendance in the GoogleSheet.
 
 
