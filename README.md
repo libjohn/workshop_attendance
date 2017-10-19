@@ -27,29 +27,16 @@ There are two goals: transform and automate attendance file movement.
 
 - You have already downloaded the 1-3 registration files from Springshare and have not changed the filenames
 - Your Springshare data files are located inside a "data" subdirectory of the R project directory
-    - project directory is identified with `getwd()`.  If not, `setwd()`
+    - project directory is identified with `getwd()`.  
 - There are no more than three files inside the data directory
     - one attendees file, one waitlist file, one cancellations file
     - the attendees file is mandatory
     - you can put each file-set in a subdirectory of the data directory.  Subdir is identified at the command line in the console (see below)
 - No user data will be uploaded to GitLab or GitHub
-- User data on your personal machine is your responsibility
-- User data in the GoogleSheet is protected by the Google Drive permissions that you have set
+    - use `.gitignore` to prevent uploading user data
+    - User data on your personal machine is your responsibility
+    - User data in the GoogleSheet is protected by the Google Drive permissions that you have set
 - The following R library-packages are used and must be installed in your R System
-    - process_files_to_df.Rmd
-        - tidyverse
-        - readr
-        - lubridate
-        - stringr
-    - write_roster.Rmd
-        - tidyverse
-        - knitr
-    - write_to_gs.Rmd
-        - googlesheets
-        - tidyverse
-    - make_add_email_to_DVS_Annouce_list.Rmd
-        - tidyverse
-        - knitr
 
 ## Step By Step Directions
 
