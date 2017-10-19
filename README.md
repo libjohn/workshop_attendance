@@ -36,16 +36,16 @@ There are two goals: transform and automate attendance file movement.
     - use `.gitignore` to prevent uploading user data
     - User data on your personal machine is your responsibility
     - User data in the GoogleSheet is protected by the Google Drive permissions that you have set
-- The following R library-packages are used and must be installed in your R System
+
 
 ## Step By Step Directions
 
-### Make a "data" and "outfile" subdirectory 
+### Make a `data` and `outfile` subdirectory 
 
 1. Fork this repository as a new project in RStudio
-1. Using the RStudio git tab, **Pull** the repo to update code
-1. [In RStudio,] From the Files pane > New Folder > `data`
-1. [In RStudio,] From the Files pane > New Folder > `outfile`
+1. Using the RStudio *git* tab, **Pull** the repo to update R code
+1. [In RStudio,] Files > New Folder > `data`
+1. [In RStudio,] Files > New Folder > `outfile`
 1. Download your Springshare registration data to your newly created `data` directory
 
 ### A. Make Attendance Roster
