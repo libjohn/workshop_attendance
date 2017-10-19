@@ -55,16 +55,17 @@ There are two goals: transform and automate attendance file movement.
 
 ### Make a "data" and "outfile" subdirectory 
 
-1. Fork this repository
+1. Fork this repository as a new project in RStudio
+1. Using the RStudio git tab, **Pull** the repo to update code
 1. [In RStudio,] From the Files pane > New Folder > `data`
-1. Repeat step above for `outfile`
+1. [In RStudio,] From the Files pane > New Folder > `outfile`
 1. Download your Springshare registration data to your newly created `data` directory
 
 ### A. Make Attendance Roster
 
 1. First, download your data from LibCal; place data inside the `data` directory of your RStudio Project 
     
-    - You can also make subdirectories inside the data directory but will need to modify line 10 of the script
+    - You can also make subdirectories inside the data directory.
         
 1. Open RStudio with Console as your active quadrant.  At the console, run the script:
 
@@ -78,11 +79,9 @@ There are two goals: transform and automate attendance file movement.
 
 ### B. Write Roster to Google-Drive, then Mark Attendance.  Add Email Addresses to DVS-Announce
 
-This script will **Transform libcal files** (which you manually downloaded), **write to Google Drive** (to manually), **produce dvs-annouce list** (to manually append).
+This script will **Transform libcal files** (which you manually downloaded), **write to Google Drive**, and **produce dvs-annouce list**.
 
-1. First, download your data from LibCal; place data inside the `data` directory of your RStudio Project 
-    
-    - You can also make subdirectories inside the data directory but will need to modify line 10 of the script
+1. Download your attendance, waitlist, and cancellation data from LibCal; place data inside the `data` directory of your RStudio Project 
         
 1. Open RStudio with Console as your active quadrant.  At the console, run the script: 
 
@@ -100,9 +99,16 @@ This script will **Transform libcal files** (which you manually downloaded), **w
 
     - The `dvs-announce_append-email.txt` file can be found in the `outfile` subdirectory of the RStudio Project
     
-    &nbsp;
-    
-    1. Open the resulting HTML file, *email_list.html*.  Copy the addresses into your clipboard buffer
-    1. Open the DVS Announce Google Doc, paste the clipboard buffer into that file.  Paste without formatting.
+        1. Open the resulting HTML file, *email_list.html*.  Copy the addresses into your clipboard buffer
+        1. Open the DVS Announce Google Doc, paste the clipboard buffer into that file.  Paste without formatting.
+        
+##### At Google Drive:
+1. Manually move the processed and uploaded registration file from your MyDrive space to Joel's predefined location
+    - My Drive > Data and Visualization Services > Workshops > Spring 2017 > Assessment
+1. The [codebook](https://docs.google.com/document/d/1MzJVkMQhAespElJ-JPT8PotqGPmZesk7FbvVTNv5Fo8/edit) defines where you will manually mark attendance, waitlist, and walk-ins.  You can use the paper Roster to help you complete this section.  
+
+Note: The process of uploading the files can take several minutes.  The length of time seems to be related to the length of the list and whether this is the first upload session of your day.  In my experience, the more files I uploaded, the quicker the upload transaction (Hmm, that's a suspect experience.  It might just be the larger the number of rows, the longer the upload transaction.  More testing required).  
+
+Note:  In this iteration I added a column **list_type** which helps identify if the attendee came from the registered or waitlisted column.  In the future I plan to remove this column because it's not in Joel's codebook.  **Therefore**, you must **manually delete** the *list_type* **column** after you have successfully marked the attendance in the GoogleSheet.
 
 
