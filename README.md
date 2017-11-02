@@ -96,5 +96,3 @@ This script will **Transform libcal files** (which you manually downloaded), **w
 
 Note: The process of uploading the files can take several minutes.  The length of time seems to be related to the length of the list and whether this is the first upload session of your day.  In my experience, the more files I uploaded, the quicker the upload transaction (Hmm, that's a suspect experience.  It might just be the larger the number of rows, the longer the upload transaction.  More testing required).  
 
-
-jrl
