@@ -1,0 +1,246 @@
+---
+title: "Write Attedance as Google Sheet -- Version: 2018-Spring"
+---
+
+```{r}
+library(tidyverse)
+library(readr)
+library(lubridate)
+library(stringr)
+library(googlesheets)
+```
+
+##  USER INIPUT:  Enter your data directory
+
+I should make this either parameterized or an input to the kniter command line
+
+```{r}
+data_dir <- "data"   # identify the data directory
+```
+
+
+##  Load Data Files
+```{r}
+files <- as_tibble(str_split(list.files(data_dir), 
+                             "_", simplify = T, 4))
+
+files
+```
+
+```{r}
+files <- files %>% 
+  rename(prefix = V1, type = V2, id = V3, id2 = V4) %>% 
+  mutate(id = if_else(id == "list", id2, id)) %>% 
+  mutate(type = if_else(type == "wait", 
+                        "wait_list", type)) %>% 
+  mutate(download_date = str_sub(id, 8, -5)) %>% 
+  mutate(course_id = str_sub(id, 1,7)) %>% 
+  mutate(file_name = paste0(data_dir, 
+                            "/", prefix, "_", 
+                            type, "_", course_id, 
+                            download_date, ".csv")) %>% 
+  select(-id2, -id) %>% 
+  arrange(type)
+
+files
+```
+
+
+
+##  Attendees as a Data Frame
+
+Generate metadata about the Attendees (confirmed) filename
+
+```{r}
+attendees_file_path <- files %>% 
+  filter(type == "attendees") %>% 
+  select(file_name, course_id)
+
+attendees_file_path
+```
+
+Coerce the Attendees (confirmed) data into a data frame
+
+```{r}
+Attendees <- read_csv(attendees_file_path$file_name, 
+                      skip=9) %>% 
+  mutate(`Registration Status` = "Registered") %>% 
+  mutate(WorkshopID = attendees_file_path$course_id) 
+
+Attendees$Attendance <- NULL
+
+Attendees
+```
+
+## Metadata about the Workshop.  
+
+```{r}
+attendees_header <- read_csv(attendees_file_path$file_name, 
+                             skip=1, n_max = 7, 
+                             col_names = FALSE)
+
+attendees_header
+```
+
+### Event Metadata data frame
+
+```{r}
+eventMetaData_attendees <- attendees_header %>% 
+  spread(X1, X2) 
+
+eventMetaData_attendees
+```
+
+
+
+### Coerce Date
+
+```{r}
+eventDate <- attendees_header %>% 
+  spread(X1, X2) %>%
+  mutate(Date2 = as.character(mdy(str_replace(Date, "\\w+,\\s", "")))) %>% 
+  select(Date2) %>% 
+  head(1) %>% 
+  as_vector() %>% 
+  unname()
+  
+
+eventDate
+```
+
+##  Wailt List as Data Frame
+
+Not all workshops have waitlists.  Therefore, This step is wrapped in an IF function to fail gracefully.
+
+```{r}
+if("wait_list" %in% files$type){
+  wl_file_path <- files %>% 
+    filter(type == "wait_list") %>% 
+    select(file_name, course_id)
+  
+  WaitList <- read_csv(wl_file_path$file_name, 
+                       skip=9)%>% 
+    mutate("Registration Status" = "Waitlist") %>% 
+    mutate(WorkshopID = wl_file_path$course_id)
+  
+  WaitList
+}  
+
+```
+
+
+##  Cancelled as Data Frame
+
+```{r}
+if("cancelled" %in% files$type){
+    cancelled_file_path <- files %>% 
+      filter(type == "cancelled")
+    
+    forGoogleDrive_Cancelled <- read_csv(cancelled_file_path$file_name, skip = 8)
+    
+    forGoogleDrive_Cancelled
+
+    } 
+
+```
+
+
+## Combine Attendee & Waitlist 
+
+### Attendees as Data Frame
+
+select order of columns
+
+```{r}
+
+forGoogleDrive_attendees <- Attendees %>% 
+  mutate("Workshop Name" = eventMetaData_attendees$Event) %>% 
+  mutate("Workshop Date" = as.character(eventDate)) %>% 
+  mutate(`Attended (x or blank)` = "") %>% 
+  rename(`Registration Status (Registered, Waitlist, or Walk-in)` = "Registration Status") %>% 
+  rename(`Booking Made` = `Booking made`) %>% 
+  select(18, 14, 17, 16, 15, 1:18) 
+
+# tbl_vars(forGoogleDrive_attendees)
+forGoogleDrive_attendees
+```
+
+### Waitlist as data frame
+
+select order of columns
+
+```{r}
+if("wait_list" %in% files$type){
+  forGoogleDrive_WaitList <- WaitList %>% 
+    mutate("Workshop Name" = eventMetaData_attendees$Event) %>% 
+    mutate("Workshop Date" = as.character(eventDate)) %>% 
+    mutate(`Attended (x or blank)` = "") %>% 
+    rename(`Registration Status (Registered, Waitlist, or Walk-in)` = "Registration Status") %>% 
+    rename(`Booking Made` = `Booking made`) %>% 
+    ####select(19, 15, 18, 17, 16, 1:19) 
+    select(18, 14, 17, 16, 15, 1:18) 
+  
+  #tbl_vars(forGoogleDrive_WaitList)
+  
+  forGoogleDrive_WaitList
+}
+```
+
+### Combine Attendees and Wait List
+
+```{r}
+if("wait_list" %in% files$type){
+  forGoogleDrive_attendees <- bind_rows(
+    forGoogleDrive_attendees,
+    forGoogleDrive_WaitList
+  ) %>% 
+    arrange(`Last Name`)
+} else {
+  forGoogleDrive_attendees <- forGoogleDrive_attendees %>% 
+    arrange(`Last Name`)
+}
+
+```
+
+
+
+## Write to GoogleDrive 
+
+Write Attendance / Waitlist / Walk-in Sheet to Google Drive
+```{r}
+# Name of GoogleSheet (i.e. filename in Google Drive)
+filename <- paste0(forGoogleDrive_attendees$`Workshop Name`[1], 
+                   "_", eventDate, "_test")
+
+test1_ss <- gs_new(filename, ws_title = filename, 
+                   input = forGoogleDrive_attendees, col_names = TRUE,
+                   trim = TRUE, verbose = TRUE)
+```
+
+If there's a "cancelled" list from LibCal, write that separately to Google Drive
+```{r}
+# forGoogleDrive_Cancelled was created in the script: "process_libcal_attendance.Rmd"
+
+if("cancelled" %in% files$type){
+  test1_ss <- gs_ws_new(test1_ss, ws_title = "Cancellations", 
+                        input = forGoogleDrive_Cancelled,
+                        col_names = FALSE, trim = TRUE, 
+                        verbose = TRUE)
+}
+```
+
+
+## email list as .csv -- to paste into dvs-announce list
+
+```{r}
+Roster <- bind_rows(Attendees, 
+                    if("wait_list" %in% files$type){WaitList}
+)
+
+Roster %>% 
+  filter(`Would you like to receive more information about DVS events and training?` == "Yes") %>% 
+  select(Email) %>% 
+  arrange(Email) %>% 
+  write_delim("outfile/dvs-announce_append-email.txt", col_names = FALSE)
+
+```
