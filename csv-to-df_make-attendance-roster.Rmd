@@ -150,10 +150,9 @@ if("wait_list" %in% files$type){
                        skip=9)%>% 
     mutate(list_type = "wait list") %>% 
     mutate(WorkshopID = wl_file_path$course_id)
+  
+  WaitList
 }  
-
-WaitList
-
 ```
 
 
