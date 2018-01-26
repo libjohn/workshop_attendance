@@ -210,7 +210,7 @@ Write Attendance / Waitlist / Walk-in Sheet to Google Drive
 ```{r}
 # Name of GoogleSheet (i.e. filename in Google Drive)
 filename <- paste0(forGoogleDrive_attendees$`Workshop Name`[1], 
-                   "_", eventDate, "_test")
+                   "_", eventDate)
 
 test1_ss <- gs_new(filename, ws_title = filename, 
                    input = forGoogleDrive_attendees, col_names = TRUE,
