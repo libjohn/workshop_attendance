@@ -159,7 +159,8 @@ forGoogleDrive_attendees <- Attendees %>%
   mutate(`Attended (x or blank)` = "") %>% 
   rename(`Registration Status (Registered, Waitlist, or Walk-in)` = "Registration Status") %>% 
   rename(`Booking Made` = `Booking made`) %>% 
-  select(18, 14, 17, 16, 15, 1:18) 
+  mutate(Attendance = "") %>% 
+  select(18, 14, 17, 16, 15, 1:4, 19, 5:19) 
 
 # tbl_vars(forGoogleDrive_attendees)
 forGoogleDrive_attendees
@@ -177,8 +178,9 @@ if("wait_list" %in% files$type){
     mutate(`Attended (x or blank)` = "") %>% 
     rename(`Registration Status (Registered, Waitlist, or Walk-in)` = "Registration Status") %>% 
     rename(`Booking Made` = `Booking made`) %>% 
-    ####select(19, 15, 18, 17, 16, 1:19) 
-    select(18, 14, 17, 16, 15, 1:18) 
+    mutate(Attendance = "") %>%
+    #select(18, 14, 17, 16, 15, 1:18) 
+    select(18, 14, 17, 16, 15, 1:4, 19, 5:19)
   
   #tbl_vars(forGoogleDrive_WaitList)
   
