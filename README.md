@@ -11,8 +11,8 @@ Run this from the console
 
 Or Maybe this is better:
 
-1. `rmarkdown::render("csv-to-df_make-attendance-roster.Rmd", output = "outfile/delete.txt")`
-1. `rmarkdown::render("csv-to-df_write-to-gs.Rmd", output = "outfile/delete.txt")`
+1. `rmarkdown::render("csv-to-df_make-attendance-roster.Rmd")`
+1. `rmarkdown::render("csv-to-df_write-to-gs.Rmd")`
 
 
 ### Attendance Sheet
