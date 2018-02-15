@@ -6,140 +6,47 @@ This script takes the registration CSV file from the LibCal registration tool an
 
 ```{r}
 library(tidyverse)
-library(readr)
 library(lubridate)
-library(stringr)
-library(googlesheets)
 ```
 
 
-##  USER INIPUT:  Enter your data directory
-
-```{r}
-data_dir <- "data"   # identify the data directory
+```{r, child="child_010_file-system_data-dir.Rmd"}
+# Identify Data directory
+# Load Files
+# Organize Files into a Data Frame
+# Generate Metadata about the Workshop from the Attendees/Confirmed-registrants File
 ```
 
 
-##  Load Data Files
+```{r, child="child_020_read-attendance-files.Rmd"}
+# Read in the Attendees/Registrants file
+# Read in the workshop metadata from the workshop header lines
+# Wrangle the Workshop Metadata
+# Read in the Waitlist file
+# read in the Cancelled file
 
-```{r}
-files <- as_tibble(str_split(list.files(data_dir), 
-                             "_", simplify = T, 4))
-files
 ```
 
 
-```{r}
-files <- files %>% 
-  rename(prefix = V1, type = V2, id = V3, id2 = V4) %>% 
-  mutate(id = if_else(id == "list", id2, id)) %>% 
-  mutate(type = if_else(type == "wait", 
-                        "wait_list", type)) %>% 
-  mutate(download_date = str_sub(id, 8, -5)) %>% 
-  mutate(course_id = str_sub(id, 1,7)) %>% 
-  mutate(file_name = paste0(data_dir, 
-                            "/", prefix, "_", 
-                            type, "_", course_id, 
-                            download_date, ".csv")) %>% 
-  select(-id2, -id) %>% 
-  arrange(type)
+## Wrangle
 
-files
+### Attendees Data Frame
+
+The Child script produced a slightly different Attendees Data Frame better suited to the "write to Google Sheets" operation. Fixing that here.  For the Roster, the Attendees data frame needs to have the 'list_type' variable rather than the 'Registered' variable.  
+```{r atttendees-df-with-list_type}
+Attendees <- Attendees %>% 
+  select(-`Registration Status`) %>% 
+  mutate(list_type = "attendee")
 ```
 
 
+###  Wailt List as Data Frame
 
-##  Attendees as a Data Frame
-
-Generate metadata about the Attendees (confirmed) filename
-```{r}
-attendees_file_path <- files %>% 
-  filter(type == "attendees") %>% 
-  select(file_name, course_id)
-
-attendees_file_path
-```
-
-Coerce the Attendees (confirmed) data into a data frame
-
-```{r}
-Attendees <- read_csv(attendees_file_path$file_name, 
-                      skip=9) %>% 
-  mutate(list_type = "attendee") %>% 
-  mutate(WorkshopID = attendees_file_path$course_id)
-
-Attendees
-```
-
-### Registration Fields
-
-Taken from row 8 of the libcal registration CSV
-
-```{r}
-registration_fields_libcal_form <- read_csv(attendees_file_path$file_name, 
-                                                 skip=8) %>% 
-  head(1) %>% 
-  as_vector() %>% 
-  unname()
-
-registration_fields_libcal_form
-```
-
-## Metadata about the Workshop.  
-
-- Event	
-- Date	
-- Time	
-- Presenter	
-- Location	
-- Campus	
-- Seats
-
-```{r}
-attendees_header <- read_csv(attendees_file_path$file_name, 
-                             skip=1, n_max = 7, 
-                             col_names = FALSE)
-
-
-attendees_header
-```
-
-### Coerce Date
-
-```{}
-eventMetaData_attendees <- attendees_header %>% 
-  spread(X1, X2) 
-
-eventDate <- mdy(
-  str_split(
-    eventMetaData_attendees$Date, ", ", 2
-  )[[1]][2]
-)
-
-eventMetaData_attendees
-
-eventDate
-```
-
-```{r}
-eventDate <- attendees_header %>% 
-  spread(X1, X2) %>%
-  mutate(Date2 = as.character(mdy(str_replace(Date, "\\w+,\\s", "")))) %>% 
-  select(Date2) %>% 
-  head(1) %>% 
-  as_vector() %>% 
-  unname()
-  
-
-eventDate
-```
-
-
-##  Wailt List as Data Frame
+Simiarly to above, the Child script produces a slightly different WaitList data frame, which is better suited to the "write to Google Sheets" operation.  Fixing that here.  For the Roster, the WaitList data frame needs to ahve the 'list_type' variable rather than the 'Registration Status' variable.
 
 Not all workshops have waitlists.  Therefore, This step is wrapped in an IF function to fail gracefully.
 
-```{r}
+```{r wrangle-waitlist-for-roster}
 
 if("wait_list" %in% files$type){
   wl_file_path <- files %>% 
@@ -168,16 +75,11 @@ if("cancelled" %in% files$type){
 ```
 
 
-
 ### Combine Attendee & Waitlist 
-
-```{r}
-registration_fields_libcal_form
-```
 
 #### Attendees
 
-```{r}
+```{r attendees_dataframe}
 forGoogleDrive_attendees <- Attendees %>% 
   mutate("Workshop Name" = eventMetaData_attendees$Event) %>% 
   mutate("Workshop Date" = as.character(eventDate)) %>% 
@@ -190,7 +92,7 @@ forGoogleDrive_attendees <- Attendees %>%
 
 #### Waitlist
 
-```{r}
+```{r waitlist_dataframe}
 if("wait_list" %in% files$type){
   forGoogleDrive_WaitList <- WaitList %>% 
     mutate("Workshop Name" = eventMetaData_attendees$Event) %>% 
@@ -206,7 +108,7 @@ if("wait_list" %in% files$type){
 
 #### Combine Attendees and Wait List
 
-```{r}
+```{r combine-attendees-and-waitlist}
 if("wait_list" %in% files$type){
   forGoogleDrive_attendees <- bind_rows(
     forGoogleDrive_attendees,
@@ -221,7 +123,7 @@ if("wait_list" %in% files$type){
 
 ## Write Roster as a .txt file
 
-```{r}
+```{r write-roster-as-csv}
 
 # Create attendance CSV file; append header
 attendees_header %>% 
