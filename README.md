@@ -6,26 +6,14 @@
 Put your LibCal Registration Data in a the `data` subdirectory
 
 Run this from the console
-1. `knitr::knit("csv-to-df_make-attendance-roster.Rmd", output = "outfile/delete.txt")`
-1. `rmarkdown::render("csv-to-df_write-to-gs.Rmd")`
-
-Or Maybe this is better:
-
-1. `rmarkdown::render("csv-to-df_make-attendance-roster.Rmd")`
-
+1. `rmarkdown::render("01_make-attendance-roster.Rmd")`
+1. `rmarkdown::render("02_write-to-googlesheets.Rmd")`
 
 ### Attendance Sheet
 
 Look in `outfile` subdirectory for output.
 
 - `outfile/attedance-roster.csv`
-
-### Deprecated Quick Start
-
-- `source("csv-to-df_make-attendance-roster.r")`
-- `source("csv-to-df_write-to-gs.r")`
-
-### Apending to use .Rmd
 
 ---
 
