@@ -5,20 +5,76 @@ date: "`r Sys.Date()`"
 output: html_notebook
 ---
 
+First run `rmarkdown::render("01_make-attendance-roster.Rmd")`
+
 ```{r}
 library(tidyverse)
 ```
 
+## Wrangle
+
+Transform Discipline Names
+
+```{r}
+roster2 <- Roster %>% 
+  rename(status = `Academic Status (or other)`) %>% 
+  rename(patron = `Have you consulted with Data and Visualization Services before this workshop?`) %>% 
+  rename(discipline = `Discipline or Affiliation`) %>% 
+  filter(status != "Perpetual") %>% 
+  ###  mutate(discp2 = discipline) %>%   ####
+  mutate(discipline = case_when(
+    discipline == "African and African American Studies" ~ "Afr",
+    discipline == "Art, Art History, and Visual Studies" ~ "Art",
+    discipline == "Asian and Middle Eastern Studies" ~ "Asia",
+    discipline == "Biology" ~ "Bio",
+    discipline == "Center for Documentary Studies" ~ "Document",
+    discipline == "Chemistry" ~ "Chem",
+    discipline == "Classical Studies" ~ "Classics",
+    discipline == "Computer Science" ~ "CS",
+    discipline == "Cultural Anthropology" ~ "Anthro",
+    discipline == "Dance" ~ "Dance",
+    discipline == "Divinity School" ~ "Div",
+    discipline == "Duke University Health System (DUHS)" ~ "DUHS",
+    discipline == "Economics" ~ "Econ",
+    discipline == "Education (Program in Education)" ~ "Edu",
+    discipline == "Engineering (Pratt School of Engineering)" ~ "Engr",
+    discipline == "English" ~ "Engl",
+    discipline == "Evolutionary Anthropology" ~ "Evol-Antro",
+    discipline == "Fuqua School of Business" ~ "Fuqua",
+    discipline == "Gender, Sexuality, and Feminist Studies" ~ "Gender",
+    discipline == "Germanic Languages and Literature" ~ "German",
+    discipline == "Graduate Liberal Studies" ~ "Liberal",
+    discipline == "History" ~ "Hist",
+    discipline == "International Comparative Studies" ~ "Comparative Lit",
+    discipline == "Law School" ~ "Law",
+    discipline == "Masters in Interdisciplinary Data Science" ~ "DS",
+    discipline == "Mathematics" ~ "Math",
+    discipline == "Nicholas School of the Environment" ~ "Nicholas",
+    discipline == "Neuroscience" ~ "Neuroscience",
+    discipline == "Philosophy" ~ "Phil",
+    discipline == "Political Science" ~ "Poli Sci",
+    discipline == "Population Health Sciences"~ "Health Sci",
+    discipline == "Psychology and Neuroscience" ~ "Psych/Neuro",
+    discipline == "Religious Studies" ~ "Relgion",
+    discipline == "Romance Studies" ~ "Romance",
+    discipline == "Sanford School of Public Policy" ~ "Sanford",
+    discipline == "Slavic and Eurasian Studies" ~ "Slavic",
+    discipline == "School of Medicine" ~ "Medicine",
+    discipline == "School of Nursing" ~ "Nursing",
+    discipline == "Sociology" ~ "Sociology",
+    discipline == "Statistical Science" ~ "Stats",
+    discipline == "Theatre Studies" ~ "Theater",
+    discipline == "Other / None" ~ "Other")) %>% 
+  mutate(status = fct_infreq(status, ordered = TRUE) ) %>% 
+  mutate(discipline = fct_infreq(discipline, ordered = TRUE))
+
+roster2 %>% 
+  arrange(status)
+```
 
 
 
 ```{r}
-Roster %>% 
-  rename(status = `Academic Status (or other)`) %>% 
-  rename(patron = `Have you consulted with Data and Visualization Services before this workshop?`) %>% 
-  mutate(status = fct_infreq(status, ordered = TRUE) ) %>% 
-  mutate(discipline = fct_infreq(`Discipline or Affiliation`, ordered = TRUE)) -> roster2
-  
 ggplot(roster2) +
   geom_bar(aes(x = fct_rev(status), fill = patron)) +
   coord_flip()
@@ -32,11 +88,11 @@ ggplot(data = roster2) +
 
 ```{r}
 roster2 %>% 
-  mutate(discipline = fct_lump(discipline, n = 10)) %>% 
+  mutate(discipline = fct_lump(discipline, n = 9)) %>% 
   ggplot() +
   geom_bar(aes(x = fct_rev(discipline), fill = fct_rev(status))) +
   coord_flip() +
-  theme(axis.text.y = element_text(angle = 60),
+  theme(axis.text.y = element_text(angle = 45),
         axis.title.y = element_blank(),
         axis.title.x = element_blank()) +
   guides(fill=guide_legend(title="Status"))
