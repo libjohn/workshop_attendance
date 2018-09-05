@@ -1,22 +1,14 @@
 ---
-title: "Preliminary Vis of Workshop Attendees"
-author: "John Little"
+title: "Workshop Attendees"
 date: "`r Sys.Date()`"
-output:
-  html_notebook: default
+output: html_notebook
 ---
 
-First run `rmarkdown::render("01_make-attendance-roster.Rmd")`
-
-```{r include=FALSE}
+```{r load libraries, include=FALSE}
 library(tidyverse)
 ```
 
-## Wrangle
-
-Transform Discipline Names
-
-```{r include=FALSE}
+```{r wrangle data, include=FALSE}
 roster2 <- Roster %>% 
   rename(status = `Academic Status (or other)`) %>% 
   rename(patron = `Have you consulted with Data and Visualization Services before this workshop?`) %>% 
@@ -74,30 +66,30 @@ roster2 <- Roster %>%
 
 
 ```{r  include=FALSE}
-roster2
+roster2 
 ```
 
 
 
-```{r include=FALSE}
+```{r wrangle interest inventory, include=FALSE}
 interest_inventory <- roster2 %>% 
   mutate(id = paste(`Last Name`, `First Name`, sep = "_")) %>% 
   select(id, status, discipline, interest) %>% 
+  mutate(interest = na_if(interest, "-")) %>% 
   separate_rows(interest, sep = ",") %>% 
   mutate(interest = trimws(interest)) %>% 
-  mutate(interest = na_if(interest, "-")) %>% 
-  drop_na(interest) %>% 
+  drop_na(interest) %>%   
   mutate(interest = case_when(
     interest == "I believe this topic is important for my career goals" ~ "Career",
     interest == "This topic is directly relevant to a course or project I'm pursuing" ~ "Course/Project",
-    interest == "I am generally curious about the topic" ~ "Curious"
+    interest == "I am generally curious about the topic" ~ "Curious",
+    interest == "I have enjoyed past DVS workshops" ~ "Loyalist",
+    interest == "Other" ~ "Other"
   )) %>% 
   mutate(interest = fct_infreq(interest, ordered = TRUE))
 
 interest_inventory
 ```
-
-## Vis
 
 
 ```{r echo=FALSE}
@@ -141,8 +133,8 @@ interest_inventory %>%
 ```{r echo=FALSE}
 interest_inventory %>% 
   ggplot() +
-  geom_bar(aes(fct_rev(fct_lump(fct_infreq(discipline), prop = 0.03)),
-               fill = interest)) +
+  geom_bar(aes(fct_rev(fct_lump(fct_infreq(discipline), prop = 0.02)),
+               fill = fct_rev(interest))) +
   coord_flip() +
   labs(y = "",
        x = "Discipline",
