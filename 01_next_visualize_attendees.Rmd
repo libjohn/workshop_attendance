@@ -2,12 +2,13 @@
 title: "Preliminary Vis of Workshop Attendees"
 author: "John Little"
 date: "`r Sys.Date()`"
-output: html_notebook
+output:
+  html_notebook: default
 ---
 
 First run `rmarkdown::render("01_make-attendance-roster.Rmd")`
 
-```{r}
+```{r include=FALSE}
 library(tidyverse)
 ```
 
@@ -15,13 +16,15 @@ library(tidyverse)
 
 Transform Discipline Names
 
-```{r}
+```{r include=FALSE}
 roster2 <- Roster %>% 
   rename(status = `Academic Status (or other)`) %>% 
   rename(patron = `Have you consulted with Data and Visualization Services before this workshop?`) %>% 
+  rename(advertizing_source = 'Where did you hear about this event?') %>% 
+  rename(affiliate = "Are you affiliated with Duke University, Duke Medical Center, DCRI, or another Duke group?") %>% 
+  rename(interest = "I'm interested in registering for this workshop because:") %>% 
   rename(discipline = `Discipline or Affiliation`) %>% 
   filter(status != "Perpetual") %>% 
-  ###  mutate(discp2 = discipline) %>%   ####
   mutate(discipline = case_when(
     discipline == "African and African American Studies" ~ "Afr",
     discipline == "Art, Art History, and Visual Studies" ~ "Art",
@@ -67,26 +70,47 @@ roster2 <- Roster %>%
     discipline == "Other / None" ~ "Other")) %>% 
   mutate(status = fct_infreq(status, ordered = TRUE) ) %>% 
   mutate(discipline = fct_infreq(discipline, ordered = TRUE))
+```
 
-roster2 %>% 
-  arrange(status)
+
+```{r  include=FALSE}
+roster2
 ```
 
 
 
-```{r}
+```{r include=FALSE}
+interest_inventory <- roster2 %>% 
+  mutate(id = paste(`Last Name`, `First Name`, sep = "_")) %>% 
+  select(id, status, discipline, interest) %>% 
+  separate_rows(interest, sep = ",") %>% 
+  mutate(interest = trimws(interest)) %>% 
+  mutate(interest = na_if(interest, "-")) %>% 
+  drop_na(interest) %>% 
+  mutate(interest = case_when(
+    interest == "I believe this topic is important for my career goals" ~ "Career",
+    interest == "This topic is directly relevant to a course or project I'm pursuing" ~ "Course/Project",
+    interest == "I am generally curious about the topic" ~ "Curious"
+  )) %>% 
+  mutate(interest = fct_infreq(interest, ordered = TRUE))
+
+interest_inventory
+```
+
+## Vis
+
+
+```{r echo=FALSE}
 ggplot(roster2) +
   geom_bar(aes(x = fct_rev(status), fill = patron)) +
-  coord_flip()
+  coord_flip() +
+  labs(y = "",
+       x = "Status",
+       title = "DVS Patron Status",
+       fill = "Patron")
 ```
 
-```{r}
-ggplot(data = roster2) +
-  geom_bar(aes(x = fct_rev(discipline), fill = status)) +
-  coord_flip()
-```
-
-```{r}
+```{r echo=FALSE}
 roster2 %>% 
   mutate(discipline = fct_lump(discipline, n = 9)) %>% 
   ggplot() +
@@ -95,7 +119,34 @@ roster2 %>%
   theme(axis.text.y = element_text(angle = 45),
         axis.title.y = element_blank(),
         axis.title.x = element_blank()) +
-  guides(fill=guide_legend(title="Status"))
+  guides(fill=guide_legend(title="Status")) +
+  labs(title = "Attendance by Discipline")
   
+```
+
+
+```{r echo=FALSE}
+interest_inventory %>% 
+  ggplot() +
+  geom_bar(aes(x = fct_rev(interest), 
+               fill = fct_rev(status))) +
+  coord_flip() +
+  labs(y = "",
+       x = "Interest",
+       title = "DVS Patron Interest Questionnaire",
+       fill = "Status")
+```
+
+
+```{r echo=FALSE}
+interest_inventory %>% 
+  ggplot() +
+  geom_bar(aes(fct_rev(fct_lump(fct_infreq(discipline), prop = 0.03)),
+               fill = interest)) +
+  coord_flip() +
+  labs(y = "",
+       x = "Discipline",
+       title = "Questionnaire by Discipline",
+       fill = "Interest")
 ```
 
