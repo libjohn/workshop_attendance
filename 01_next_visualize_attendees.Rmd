@@ -1,7 +1,7 @@
 ---
 title: "Workshop Attendees"
-date: "`r Sys.Date()`"
 output: html_notebook
+date: "`r Sys.Date()`"
 ---
 
 ```{r load libraries, include=FALSE}
@@ -26,7 +26,7 @@ roster2 <- Roster %>%
     discipline == "Chemistry" ~ "Chem",
     discipline == "Classical Studies" ~ "Classics",
     discipline == "Computer Science" ~ "CS",
-    discipline == "Cultural Anthropology" ~ "Anthro",
+    discipline == "Cultural Anthropology" ~ "Anthro", 
     discipline == "Dance" ~ "Dance",
     discipline == "Divinity School" ~ "Div",
     discipline == "Duke University Health System (DUHS)" ~ "DUHS",
@@ -42,11 +42,15 @@ roster2 <- Roster %>%
     discipline == "History" ~ "Hist",
     discipline == "International Comparative Studies" ~ "Comparative Lit",
     discipline == "Law School" ~ "Law",
+    discipline == "Linquistics" ~ "Linquistics",
+    discipline == "Literature" ~ "Lit", 
     discipline == "Masters in Interdisciplinary Data Science" ~ "DS",
     discipline == "Mathematics" ~ "Math",
-    discipline == "Nicholas School of the Environment" ~ "Nicholas",
+    discipline == "Music" ~ "Music",
     discipline == "Neuroscience" ~ "Neuroscience",
+    discipline == "Nicholas School of the Environment" ~ "Nicholas",
     discipline == "Philosophy" ~ "Phil",
+    discipline == "Physics" ~ "Physics",
     discipline == "Political Science" ~ "Poli Sci",
     discipline == "Population Health Sciences"~ "Health Sci",
     discipline == "Psychology and Neuroscience" ~ "Psych/Neuro",
@@ -59,7 +63,8 @@ roster2 <- Roster %>%
     discipline == "Sociology" ~ "Sociology",
     discipline == "Statistical Science" ~ "Stats",
     discipline == "Theatre Studies" ~ "Theater",
-    discipline == "Other / None" ~ "Other")) %>% 
+    discipline == "Other / None" ~ "Other"
+    )) %>% 
   mutate(status = fct_infreq(status, ordered = TRUE) ) %>% 
   mutate(discipline = fct_infreq(discipline, ordered = TRUE))
 ```
@@ -94,7 +99,8 @@ interest_inventory
 
 ```{r echo=FALSE}
 ggplot(roster2) +
-  geom_bar(aes(x = fct_rev(status), fill = patron)) +
+  geom_bar(aes(x = fct_rev(status), 
+               fill = fct_rev(patron))) +
   coord_flip() +
   labs(y = "",
        x = "Status",
