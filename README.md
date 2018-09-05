@@ -7,6 +7,7 @@ Put your LibCal Registration Data in a the `data` subdirectory
 
 Run this from the console
 1. `rmarkdown::render("01_make-attendance-roster.Rmd")`
+1. `rmarkdown::render("01__next_visualize_attendees.Rmd")`
 1. `rmarkdown::render("02_write-to-googlesheets.Rmd")`
 
 ### Attendance Sheet
