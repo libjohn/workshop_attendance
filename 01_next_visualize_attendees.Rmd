@@ -101,6 +101,7 @@ interest_inventory
 ggplot(roster2) +
   geom_bar(aes(x = fct_rev(status), 
                fill = fct_rev(patron))) +
+  viridis::scale_fill_viridis(discrete = TRUE) +
   coord_flip() +
   labs(y = "",
        x = "Status",
