@@ -100,7 +100,8 @@ interest_inventory
 ```{r echo=FALSE}
 ggplot(roster2) +
   geom_bar(aes(x = fct_rev(status), 
-               fill = fct_rev(patron))) +
+               fill = fct_rev(patron)),
+           color = "black") +
   viridis::scale_fill_viridis(discrete = TRUE) +
   coord_flip() +
   labs(y = "",
@@ -113,7 +114,9 @@ ggplot(roster2) +
 roster2 %>% 
   mutate(discipline = fct_lump(discipline, n = 9)) %>% 
   ggplot() +
-  geom_bar(aes(x = fct_rev(discipline), fill = fct_rev(status))) +
+  geom_bar(aes(x = fct_rev(discipline), 
+               fill = fct_rev(status)),
+           color = "black") +
   coord_flip() +
   theme(axis.text.y = element_text(angle = 45),
         axis.title.y = element_blank(),
@@ -128,7 +131,8 @@ roster2 %>%
 interest_inventory %>% 
   ggplot() +
   geom_bar(aes(x = fct_rev(interest), 
-               fill = fct_rev(status))) +
+               fill = fct_rev(status)),
+           color = "black") +
   coord_flip() +
   labs(y = "",
        x = "Interest",
@@ -141,7 +145,8 @@ interest_inventory %>%
 interest_inventory %>% 
   ggplot() +
   geom_bar(aes(fct_rev(fct_lump(fct_infreq(discipline), prop = 0.02)),
-               fill = fct_rev(interest))) +
+               fill = fct_rev(interest)),
+           color = "black") +
   coord_flip() +
   labs(y = "",
        x = "Discipline",
