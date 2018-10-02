@@ -1,12 +1,12 @@
 ---
 title: "Write Attedance as Google Sheet -- Version: 2018-Spring"
-output: html_notebook
 ---
 
 ```{r}
 library(tidyverse)
 library(lubridate)
-library(googlesheets)
+#library(googlesheets) # look for auth/auth in googlesheet4
+library(googledrive)
 ```
 
 ```{r, child="child_010_file-system_data-dir.Rmd"}
@@ -91,19 +91,40 @@ if("wait_list" %in% files$type){
 
 ## Write to GoogleDrive 
 
+** Next Code chunk disabled** b/c googlesheets not uploading.  Switching to `library(goodldrive)`.  See line 110
+
 Write Attendance / Waitlist / Walk-in Sheet to Google Drive
-```{r write-to-googlesheets}
+``` r 
+# {r, write-to-googlesheets, eval=FALSE, include=FALSE}
 # Name of GoogleSheet (i.e. filename in Google Drive)
-filename <- paste0(forGoogleDrive_attendees$`Workshop Name`[1], 
-                   "_", eventDate)
+filename <- paste("foo", 
+                  forGoogleDrive_attendees$`Workshop Name`[1],
+                  eventDate,
+                  sep = "_")
 
 test1_ss <- gs_new(filename, ws_title = filename, 
                    input = forGoogleDrive_attendees, col_names = TRUE,
                    trim = TRUE, verbose = TRUE)
 ```
 
+```{r upload_to_googledrive}
+filename <- paste("foo", 
+                  forGoogleDrive_attendees$`Workshop Name`[1],
+                  eventDate,
+                  sep = "_")
+
+write.csv(forGoogleDrive_attendees, "data/foo.csv")
+test2_ss <- drive_upload("data/foo.csv", 
+                         name = filename,
+                         type = "spreadsheet")
+```
+
+** Next Code chunk disabled** b/c googlesheets not uploading.  Switching to `library(goodldrive)`.  See line 110.  Anyway, we never implemented cancellations b/c the data are woefully incomplete.
+
+
 If there's a "cancelled" list from LibCal, write that separately to Google Drive
-```{r write-cancelled-to-googlesheets}
+``` r 
+# {r, write-cancelled-to-googlesheets, eval=FALSE, include=FALSE}
 # forGoogleDrive_Cancelled was created in the script: "process_libcal_attendance.Rmd"
 
 if("cancelled" %in% files$type){
