@@ -1,0 +1,134 @@
+## Child Document -- File System Activity
+
+#### Note to John
+
+Eventually upgrade this to use
+- `library(here)`
+- `library(fs)`
+
+###  USER INIPUT:  Enter your data directory
+
+#### Note to John
+
+I should make this either parameterized or an input to the kniter command line.  But until then...
+
+### Identify Data Directory
+
+User should place all attendance, waitlist, and cancelled files (if usd) in the 'data' subdirectory of the project directory.
+
+```{r child_datadir}
+#data_dir <- "data"   # identify the data directory
+library(tidyverse)
+library(fs)
+#library(here)
+#files_chosen <- choose.files()
+#file_info(files_chosen)
+#path_split(files_chosen)
+#path_rel(files_chosen)
+
+#last(str_split(path_rel(files_chosen), "/"))
+#files_chosen <- choose.files()
+files_table <- as_tibble(path_rel(choose.files()))
+full_file_names <- files_table %>% 
+  mutate(data_dir = path_dir(value)) %>% 
+  mutate(data_file = path_file(value)) %>% 
+  mutate(file_parts = value) %>% 
+  mutate(file_parts = str_replace(file_parts, 
+                                   "wait_list", 
+                                   "waitlist")) %>% 
+  mutate(new = str_split(file_parts, 
+                             "_", simplify = T))
+  mutate(csv_file = str_extract(data_file,
+                                  "lc_\\w+_.*\\.csv"))
+  rename(relpath = value) %>% 
+  select(data_file, data_dir, relpath) %>% 
+
+  
+file_parts <- str_extract(full_file_names, "lc_\\w+_.*\\.csv")
+#file_names
+file_names <- str_replace(file_names, "wait_list", "waitlist")
+files <- as_tibble(str_split(file_names, 
+                             "_", simplify = T))
+files
+
+#fs::path_rel(full_file_names)
+
+###  path_file(full_file_names)
+###  path_dir(full_file_names)
+
+
+
+
+
+#file_names
+#file_info(files_chosen)$path
+#path_sanitize(files_chosen)
+#path_tidy(files_chosen)
+#file_show()
+#here::here()
+
+#dir_ls(choose.dir(), type="file", glob = "*.csv")
+#dir_ls(choose.dir(), type="file", regexp = "lc_attend")
+```
+
+```{r REPLACE_codechunk_82}
+files <- files %>% 
+  rename(prefix = V1, type = V2, id = V3) %>% 
+  #mutate(id = if_else(id == "list", id2, id)) %>% 
+  mutate(type = if_else(type == "waitlist", 
+                        "wait_list", type)) %>% 
+  mutate(download_date = str_sub(id, 8, -5)) %>% 
+  mutate(course_id = str_sub(id, 1,7)) %>% 
+  mutate(file_name = paste0(prefix, "_", 
+                            type, "_", course_id, 
+                            download_date, ".csv")) %>% 
+  select(-id) %>% 
+  arrange(type)
+
+files
+```
+
+
+###  Load Data Files
+```{r child_load-data}
+files <- as_tibble(str_split(list.files(data_dir), 
+                             "_", simplify = T, 4))
+
+files
+```
+
+### As Data Frame
+
+Organize the filesystem data into a data frame
+
+```{r child_file-system_df}
+files <- files %>% 
+  rename(prefix = V1, type = V2, id = V3, id2 = V4) %>% 
+  mutate(id = if_else(id == "list", id2, id)) %>% 
+  mutate(type = if_else(type == "wait", 
+                        "wait_list", type)) %>% 
+  mutate(download_date = str_sub(id, 8, -5)) %>% 
+  mutate(course_id = str_sub(id, 1,7)) %>% 
+  mutate(file_name = paste0(data_dir, 
+                            "/", prefix, "_", 
+                            type, "_", course_id, 
+                            download_date, ".csv")) %>% 
+  select(-id2, -id) %>% 
+  arrange(type)
+
+files
+```
+
+
+###  Attendees as a Data Frame
+
+Generate metadata about the Attendees (confirmed) filename
+
+```{r}
+attendees_file_path <- files %>% 
+  filter(type == "attendees") %>% 
+  select(file_name, course_id)
+
+attendees_file_path
+```
+

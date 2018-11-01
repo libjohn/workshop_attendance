@@ -1,0 +1,164 @@
+---
+title: "Generate Attendance List -- Version: 2018-Spring"
+---
+
+This script takes the registration CSV file from the LibCal registration tool and generates a more useful attendance roster that can be printed in advance of the class.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+
+```{r, child="child_010_file-system_data-dir.Rmd"}
+# Identify Data directory
+# Load Files
+# Organize Files into a Data Frame
+# Generate Metadata about the Workshop from the Attendees/Confirmed-registrants File
+```
+
+
+```{r, child="child_020_read-attendance-files.Rmd"}
+# Read in the Attendees/Registrants file
+# Read in the workshop metadata from the workshop header lines
+# Wrangle the Workshop Metadata
+# Read in the Waitlist file
+# read in the Cancelled file
+
+```
+
+
+## Wrangle
+
+### Attendees Data Frame
+
+The Child script produced a slightly different Attendees Data Frame better suited to the "write to Google Sheets" operation. Fixing that here.  For the Roster, the Attendees data frame needs to have the 'list_type' variable rather than the 'Registered' variable.  
+```{r atttendees-df-with-list_type}
+Attendees <- Attendees %>% 
+  select(-`Registration Status`) %>% 
+  mutate(list_type = "attendee")
+```
+
+
+###  Wailt List as Data Frame
+
+Simiarly to above, the Child script produces a slightly different WaitList data frame, which is better suited to the "write to Google Sheets" operation.  Fixing that here.  For the Roster, the WaitList data frame needs to ahve the 'list_type' variable rather than the 'Registration Status' variable.
+
+Not all workshops have waitlists.  Therefore, This step is wrapped in an IF function to fail gracefully.
+
+```{r wrangle-waitlist-for-roster}
+
+if("wait_list" %in% files$type){
+  wl_file_path <- files %>% 
+    filter(type == "wait_list") %>% 
+    select(file_name, course_id)
+  
+  WaitList <- read_csv(wl_file_path$file_name, 
+                       skip=9)%>% 
+    mutate(list_type = "wait list") %>% 
+    mutate(WorkshopID = wl_file_path$course_id)
+  
+  WaitList
+}  
+```
+
+
+##  Cancellations as a Data Frame
+
+```{r}
+if("cancelled" %in% files$type){
+  cancelled_file_path <- files %>% 
+    filter(type == "cancelled")
+  
+  forGoogleDrive_Cancelled <- read_csv(cancelled_file_path$file_name, skip = 8)
+} 
+```
+
+
+### Combine Attendee & Waitlist 
+
+#### Attendees
+
+```{r attendees_dataframe}
+forGoogleDrive_attendees <- Attendees %>% 
+  mutate("Workshop Name" = eventMetaData_attendees$Event) %>% 
+  mutate("Workshop Date" = as.character(eventDate)) %>% 
+  mutate("Attended" = "") %>% 
+  mutate("Walk-in" = "") %>% 
+  mutate("Waitlist" = "") %>% 
+  select(Attended, "Walk-in", Waitlist, list_type,
+         "Workshop Date", "Workshop Name", WorkshopID, 1:4, 6:20)
+```
+
+#### Waitlist
+
+```{r waitlist_dataframe}
+if("wait_list" %in% files$type){
+  forGoogleDrive_WaitList <- WaitList %>% 
+    mutate("Workshop Name" = eventMetaData_attendees$Event) %>% 
+    mutate("Workshop Date" = as.character(eventDate)) %>% 
+    mutate("Attended" = "") %>% 
+    mutate("Walk-in" = "") %>% 
+    mutate("Waitlist" = "") %>% 
+    select(Attended, "Walk-in", Waitlist, list_type,
+         "Workshop Date", "Workshop Name", WorkshopID, 1:4, 6:20)
+}
+
+```
+
+#### Combine Attendees and Wait List
+
+```{r combine-attendees-and-waitlist}
+if("wait_list" %in% files$type){
+  forGoogleDrive_attendees <- bind_rows(
+    forGoogleDrive_attendees,
+    forGoogleDrive_WaitList
+  ) %>% 
+    arrange(`Last Name`)
+} else {
+  forGoogleDrive_attendees <- forGoogleDrive_attendees %>% 
+    arrange(`Last Name`)
+}
+```
+
+## Write Roster as a .txt file
+
+```{r write-roster-as-csv}
+
+# Create attendance CSV file; append header
+attendees_header %>% 
+  write_excel_csv("outfile/attendance-roster.csv", col_names = FALSE)
+
+# append blank line to attendance CSV file
+blank <-  as_tibble(" ")
+blank %>% 
+  write_excel_csv("outfile/attendance-roster.csv", append = TRUE)
+
+# Create an Example Entry
+Example <- tibble(
+  `Last Name` = "Chigurh", 
+  `First Name` = "Anton", 
+  Email = "cipher@cloud.net", 
+  `Academic Status (or other)` = "Perpetual", 
+  `Discipline or Affiliation` = "Sanitation", 
+  list_type = "Example")
+
+# Create a Roster data frame by adding the Example Entry data frame and the Attendees data frame
+Roster <- bind_rows(Attendees, 
+                    Example,
+                    if("wait_list" %in% files$type){WaitList}
+)
+
+# append the Roster data frame to the attendance CSV file
+Roster %>% 
+  select(`Last Name`, `First Name`, `Email`, 
+         Status = `Academic Status (or other)`, 
+         Discipline = `Discipline or Affiliation`, 
+         Registration = list_type) %>% 
+  arrange(`Last Name`) %>% 
+  mutate(Attendance = "") %>% 
+  mutate(Attendance = if_else(Status == "Perpetual", 
+                              "X", Attendance)) %>% 
+  write_excel_csv("outfile/attendance-roster.csv", 
+                  append = TRUE, col_names = TRUE)
+```

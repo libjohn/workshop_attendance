@@ -1,0 +1,86 @@
+## Child Document -- Read in the Files
+
+### Read in  the Attendees (confirmed) data into a data frame
+
+```{r child_read-attendees-file}
+Attendees <- read_csv(attendees_file_path$file_name, 
+                      skip=9) %>% 
+  mutate(`Registration Status` = "Registered") %>% 
+  mutate(WorkshopID = attendees_file_path$course_id) 
+
+Attendees$Attendance <- NULL
+
+Attendees
+```
+
+## Metadata about the Workshop.  
+
+```{r child_read-workshop-metadata}
+attendees_header <- read_csv(attendees_file_path$file_name, 
+                             skip=1, n_max = 7, 
+                             col_names = FALSE)
+
+attendees_header
+```
+
+### Event Metadata data frame
+
+```{r child_wrangle-workshop-metadata}
+eventMetaData_attendees <- attendees_header %>% 
+  spread(X1, X2) 
+
+eventMetaData_attendees
+```
+
+
+
+### Wrangle Workshop Date
+
+```{r child_wrangle-workshop-date}
+eventDate <- attendees_header %>% 
+  spread(X1, X2) %>%
+  mutate(Date2 = as.character(mdy(str_replace(Date, "\\w+,\\s", "")))) %>% 
+  select(Date2) %>% 
+  head(1) %>% 
+  as_vector() %>% 
+  unname()
+  
+
+eventDate
+```
+
+###  Wailt List as Data Frame
+
+Not all workshops have waitlists.  Therefore, This step is wrapped in an IF function to fail gracefully.
+
+```{r child_read-waitlist-file}
+if("wait_list" %in% files$type){
+  wl_file_path <- files %>% 
+    filter(type == "wait_list") %>% 
+    select(file_name, course_id)
+  
+  WaitList <- read_csv(wl_file_path$file_name, 
+                       skip=9)%>% 
+    mutate("Registration Status" = "Waitlist") %>% 
+    mutate(WorkshopID = wl_file_path$course_id)
+  
+  WaitList
+}  
+
+```
+
+
+###  Cancelled as Data Frame
+
+```{r child_read-cancelled-file}
+if("cancelled" %in% files$type){
+    cancelled_file_path <- files %>% 
+      filter(type == "cancelled")
+    
+    forGoogleDrive_Cancelled <- read_csv(cancelled_file_path$file_name, skip = 8)
+    
+    forGoogleDrive_Cancelled
+
+    } 
+
+```
