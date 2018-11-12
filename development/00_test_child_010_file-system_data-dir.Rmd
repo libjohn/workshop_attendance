@@ -20,6 +20,76 @@ User should place all attendance, waitlist, and cancelled files (if usd) in the 
 #data_dir <- "data"   # identify the data directory
 library(tidyverse)
 library(fs)
+```
+
+
+```{r}
+files_table <- as_tibble(path_rel(choose.files()))
+full_file_names <- files_table %>% 
+  rename(relpath = value) %>% 
+  mutate(data_dir = path_dir(relpath)) %>% 
+  mutate(data_file = path_file(relpath)) %>% 
+  mutate(metadata_filename = str_replace(relpath, 
+                                   "wait_list", 
+                                   "waitlist")) %>% 
+  mutate(metadata_filename = str_extract(metadata_filename,
+                           "lc_\\w+_\\d+")) %>% 
+  separate(metadata_filename, 
+           into = c("prefix", "type", "workshop_id")) %>% 
+  separate(workshop_id, 
+           into = c("workshop_id", "download_date", "pid"), 
+           sep = c(7,15))
+
+#glimpse(full_file_names)
+
+```
+
+## WTF
+https://serialmentor.com/blog/2016/6/13/reading-and-combining-many-tidy-data-files-in-R
+
+```{r}
+
+files <- dir("../data/intro2r/")
+data_path <- "data/intro2r/"
+files <- dir(data_path, pattern = "*.csv")
+
+file.path(dir("../data/intro2r"))
+
+
+files %>% 
+  map_dfr(~ read_csv(file.path(data_path, .), skip = 9))
+
+
+data_frame(filename = files) %>% 
+  mutate(file_contents = map_dfr(~, read_csv(file.path(data_path, .), skip = 9)))
+
+data_frame(filename = files) %>% 
+  mutate(file_contents = map_dfr(), read_csv, skip = 9)
+
+
+full_file_names %>% 
+  mutate(contents = map(relpath, 
+                        ~ read_csv(relpath)))
+
+#files <- path_rel(choose.files())
+
+data_frame(filename = files) %>% 
+  mutate(files_contents = map(filename,
+                              ~ read_csv(file.path(data_path, .))))
+
+```
+
+
+
+```{r}
+files_vector <- path_rel(choose.files())
+
+df()
+```
+
+
+
+``` r
 #library(here)
 #files_chosen <- choose.files()
 #file_info(files_chosen)
@@ -28,37 +98,20 @@ library(fs)
 
 #last(str_split(path_rel(files_chosen), "/"))
 #files_chosen <- choose.files()
-files_table <- as_tibble(path_rel(choose.files()))
-full_file_names <- files_table %>% 
-  mutate(data_dir = path_dir(value)) %>% 
-  mutate(data_file = path_file(value)) %>% 
-  mutate(file_parts = value) %>% 
-  mutate(file_parts = str_replace(file_parts, 
-                                   "wait_list", 
-                                   "waitlist")) %>% 
-  mutate(new = str_split(file_parts, 
-                             "_", simplify = T))
-  mutate(csv_file = str_extract(data_file,
-                                  "lc_\\w+_.*\\.csv"))
-  rename(relpath = value) %>% 
-  select(data_file, data_dir, relpath) %>% 
+
 
   
-file_parts <- str_extract(full_file_names, "lc_\\w+_.*\\.csv")
+####file_parts <- str_extract(full_file_names, "lc_\\w+_.*\\.csv")
 #file_names
-file_names <- str_replace(file_names, "wait_list", "waitlist")
-files <- as_tibble(str_split(file_names, 
-                             "_", simplify = T))
-files
+#file_names <- str_replace(file_names, "wait_list", "waitlist")
+#files <- as_tibble(str_split(full_file_names$metadata_filename, 
+#                             "_", simplify = T))
+#files
 
 #fs::path_rel(full_file_names)
 
 ###  path_file(full_file_names)
 ###  path_dir(full_file_names)
-
-
-
-
 
 #file_names
 #file_info(files_chosen)$path
@@ -71,7 +124,7 @@ files
 #dir_ls(choose.dir(), type="file", regexp = "lc_attend")
 ```
 
-```{r REPLACE_codechunk_82}
+``` r
 files <- files %>% 
   rename(prefix = V1, type = V2, id = V3) %>% 
   #mutate(id = if_else(id == "list", id2, id)) %>% 
@@ -90,7 +143,7 @@ files
 
 
 ###  Load Data Files
-```{r child_load-data}
+``` r 
 files <- as_tibble(str_split(list.files(data_dir), 
                              "_", simplify = T, 4))
 
@@ -101,7 +154,8 @@ files
 
 Organize the filesystem data into a data frame
 
-```{r child_file-system_df}
+``` r 
+
 files <- files %>% 
   rename(prefix = V1, type = V2, id = V3, id2 = V4) %>% 
   mutate(id = if_else(id == "list", id2, id)) %>% 
@@ -124,7 +178,7 @@ files
 
 Generate metadata about the Attendees (confirmed) filename
 
-```{r}
+``` r
 attendees_file_path <- files %>% 
   filter(type == "attendees") %>% 
   select(file_name, course_id)
