@@ -9,6 +9,7 @@ rsconnect
 # Session Data files
 .RData
 data/*
+development/data*
 outfile/*
 
 # Output Files

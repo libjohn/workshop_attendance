@@ -28,7 +28,7 @@ files_table <- as_tibble(path_rel(choose.files()))
 full_file_names <- files_table %>% 
   rename(relpath = value) %>% 
   mutate(data_dir = path_dir(relpath)) %>% 
-  mutate(data_file = path_file(relpath)) %>% 
+  mutate(data_filename = path_file(relpath)) %>% 
   mutate(metadata_filename = str_replace(relpath, 
                                    "wait_list", 
                                    "waitlist")) %>% 
@@ -40,111 +40,52 @@ full_file_names <- files_table %>%
            into = c("workshop_id", "download_date", "pid"), 
            sep = c(7,15))
 
-#glimpse(full_file_names)
+glimpse(full_file_names)
 
 ```
 
 ```{r}
-read_skip_9 = function(fn) {
-  read_csv(fn, skip = 9)
+full_file_names %>% 
+  mutate(reg_data = map(relpath, read_csv, skip = 9)) %>% 
+  unnest()
+
+#map(full_file_names$relpath, read_csv, skip = 9) %>% 
+#  bind_rows()
+
+```
+
+
+
+```{r}
+files_table <- as_tibble(path_rel(choose.files()))
+full_file_names <- files_table %>% 
+  rename(relpath = value) %>% 
+  mutate(data_dir = path_dir(relpath)) %>% 
+  mutate(data_file = path_file(relpath)) %>% 
+  mutate(metadata_filename = str_replace(relpath, 
+                                   "wait_list", 
+                                   "waitlist")) %>% 
+  mutate(metadata_filename = str_extract(metadata_filename,
+                           "lc_\\w+_\\d+")) %>% 
+  separate(metadata_filename, 
+           into = c("prefix", "type", "workshop_id")) %>% 
+  separate(workshop_id, 
+           into = c("workshop_id", "download_date", "pid"), 
+           sep = c(7,15))
+```
+
+
+
+```{r}
+read_skip_9 = function(file) {
+  skip9 <- read_csv(file, skip = 9)
 }
 ```
 
 
 ```{r}
-skip9 <- read_skip_9(choose.files())
-
-
-map_dfr(read_skip_9(choose.files()))
-
+read_skip_9()
 ```
-
-
-```{r}
-files <- dir(pattern = "*.csv")
-files
-
-```
-
-```{r}
-#files <- path_rel(choose.files())
-data <- files %>% 
-  map(read_csv) %>% 
-  reduce(rbind)
-
-data
-
-```
-
-
-```{r}
-data_path <- "data2"
-
-files <- dir(data_path, pattern = "*2.csv")
-
-data <- files %>% 
-  map(~ read_csv(file.path(data_path, .))) %>% 
-  reduce(rbind)
-
-data
-```
-
-```{r}
-data <- files %>%
-  map(function(xt5c) read_csv(file.path(data_path, xt5c))) %>%  
-  reduce(rbind)
-data
-```
-
-
-```{r}
-data <- data_frame(filename = files) %>% # create a data frame
-                                         # holding the file names
-  mutate(file_contents = map(filename,          # read files into
-           ~ read_csv(file.path(data_path, .))) # a new data column
-        )  
-data  
-
-
-unnest(data)
-
-```
-
-
-```{r}
-cities <- data_frame(city = c("nyc2", "houston2"),
-                     state = c("NY", "TX"),
-                     area = c(305, 599.6))
-cities
-```
-
-
-```{r}
-data <- cities %>% # start with the cities table
-  # create filenames
-  mutate(filename = paste(city, ".csv", sep="")) %>%
-  # read in data
-  mutate(file_contents = map(filename,
-           ~ read_csv(file.path(data_path, .)))
-        ) %>% 
-  select(-filename) %>% # remove filenames, not needed anynmore
-  unnest() #%>% # unnest
-  #select(-location) # remove location column, not needed
-                    # since we have city and state columns
-data
-```
-
-
-```{r}
-cities %>%  
-  mutate(filename = paste(city, ".csv", sep="")) %>%
-  mutate(file_contents = map(filename, ~ read_csv(file.path(data_path, .)))) %>% 
-  unnest()
-  
-  
-  
-```
-
 
 
 
