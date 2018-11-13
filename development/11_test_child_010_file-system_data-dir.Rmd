@@ -1,32 +1,48 @@
-## Child Document -- File System Activity
 
-#### Note to John
+## Load Packages
 
-Eventually upgrade this to use
-- `library(here)`
-- `library(fs)`
-
-###  USER INIPUT:  Enter your data directory
-
-#### Note to John
-
-I should make this either parameterized or an input to the kniter command line.  But until then...
-
-### Identify Data Directory
-
-User should place all attendance, waitlist, and cancelled files (if usd) in the 'data' subdirectory of the project directory.
-
-```{r child_datadir}
-#data_dir <- "data"   # identify the data directory
+```{r packages}
 library(tidyverse)
 library(fs)
 ```
 
+## Import Data
 
-```{r}
+### Registration Data
+
+Instructor will download the registered and waitlist files from libcal (SpringShare).  Below, the instructor will choose the location of these files on the filesystem.  
+
+```{r import-registration-data}
 files_table <- as_tibble(path_rel(choose.files()))
+
 full_file_names <- files_table %>% 
   rename(relpath = value) %>% 
+  filter(str_detect(path_ext(relpath), 
+                    fixed("csv", ignore_case = TRUE))) %>% 
+  mutate(reg_data = map(relpath, read_csv, skip = 9)) %>% 
+  unnest()
+  
+
+full_file_names  
+```
+
+### Workshop Metadata
+
+```{r roster-header}
+attendees_header <- read_csv(head(files_table$value, 1), 
+                             skip=1, n_max = 7, 
+                             col_names = FALSE) %>% 
+  spread(X1, X2)
+
+attendees_header
+
+
+
+```
+
+
+
+``` r
   mutate(data_dir = path_dir(relpath)) %>% 
   mutate(data_filename = path_file(relpath)) %>% 
   mutate(metadata_filename = str_replace(relpath, 
@@ -44,15 +60,7 @@ glimpse(full_file_names)
 
 ```
 
-```{r}
-full_file_names %>% 
-  mutate(reg_data = map(relpath, read_csv, skip = 9)) %>% 
-  unnest()
 
-#map(full_file_names$relpath, read_csv, skip = 9) %>% 
-#  bind_rows()
-
-```
 
 
 
@@ -76,61 +84,17 @@ full_file_names <- files_table %>%
 
 
 
-```{r}
-read_skip_9 = function(file) {
-  skip9 <- read_csv(file, skip = 9)
-}
-```
 
-
-```{r}
-read_skip_9()
-```
 
 
 
 ## WTF
 https://serialmentor.com/blog/2016/6/13/reading-and-combining-many-tidy-data-files-in-R
 
-```{r}
-
-files <- dir("../data/intro2r/")
-data_path <- "data/intro2r/"
-files <- dir(data_path, pattern = "*.csv")
-
-file.path(dir("../data/intro2r"))
-
-
-files %>% 
-  map_dfr(~ read_csv(file.path(data_path, .), skip = 9))
-
-
-data_frame(filename = files) %>% 
-  mutate(file_contents = map_dfr(~, read_csv(file.path(data_path, .), skip = 9)))
-
-data_frame(filename = files) %>% 
-  mutate(file_contents = map_dfr(), read_csv, skip = 9)
-
-
-full_file_names %>% 
-  mutate(contents = map(relpath, 
-                        ~ read_csv(relpath)))
-
-#files <- path_rel(choose.files())
-
-data_frame(filename = files) %>% 
-  mutate(files_contents = map(filename,
-                              ~ read_csv(file.path(data_path, .))))
-
-```
 
 
 
-```{r}
-files_vector <- path_rel(choose.files())
 
-df()
-```
 
 
 
