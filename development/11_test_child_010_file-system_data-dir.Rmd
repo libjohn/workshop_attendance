@@ -3,6 +3,8 @@ title: "Workshop Attendees"
 subtitle: "Produce Roster for printing via Excel ; Visualize Attendance"
 output: html_notebook
 date: "`r Sys.Date()`"
+params:
+  upload: FALSE  # if you want to upload to google, change this option to TRUE
 ---
 
 ## Load Packages
@@ -16,6 +18,19 @@ library(kableExtra)
 library(lubridate)
 library(googledrive)
 ```
+
+## Functions
+
+```{r}
+waitlist_fix = function(var1) {
+  str_replace(var1, "wait_list", "waitlist")
+}
+
+extract_toTitle = function(var1, word_set) {
+  str_to_title(str_extract(var1, word_set))
+}
+```
+
 
 ## Import Data
 
@@ -66,7 +81,8 @@ roster <- full_file_names %>%
          Status = `Academic Status (or other)`, 
          Discipline = `Discipline or Affiliation`,
          relpath) %>% 
-  mutate(Registration = str_to_title(str_extract(relpath, "(attendees|wait_list)"))) %>% 
+  mutate(relpath = waitlist_fix(relpath)) %>% 
+  mutate(Registration = extract_toTitle(relpath, "(attendees|waitlist)")) %>% 
   select(-relpath) %>% 
   arrange(`Last Name`) 
 ```
@@ -247,28 +263,45 @@ interest_inventory %>%
 
 ## Upload to Google Drive
 
+Wrangle the content and order of the Tibble variables
+
 ```{r}
 for_goog <- full_file_names %>% 
   mutate("Workshop Name" = attendees_header %>% spread(X1, X2) %>% select(Event) %>% toString()) %>% 
   mutate("Workshop Date" = attendees_header %>% spread(X1, X2) %>% select(Date) %>% mdy()) %>% 
   mutate(`Attended (x or blank)` = " ") %>% 
-  #rename(`Registration Status (Registered, Waitlist, or Walk-in)` = "Registration Status") %>% 
-  rename(`Booking Made` = `Booking made`)
-  #select("Workshop Name", "Workshop Date") 
-for_goog  
-  
-  mutate(`Workshop Date` = attendees_header %>% 
-           filter(X1 == "Date") %>% 
-           select(X2) %>% 
-           unname()) %>% 
-  select()
-  
-  
-attendees_header %>% spread(X1, X2) %>% select(Event) %>% toString()
+  mutate(relpath = waitlist_fix(relpath)) %>% 
+  mutate(`Registration Status (Registered, Waitlist, or Walk-in)` = extract_toTitle(relpath, "(attendees|waitlist)")) %>% 
+  mutate(metadata_filename = str_extract(relpath, "lc_\\w+_\\d+")) %>%
+  separate(metadata_filename, into = c("prefix", "type", "workshop_id")) %>% 
+  separate(workshop_id, into = c("WorkshopID", "pid"), sep = c(7)) %>% 
+  rename(`Booking Made` = `Booking made`) %>% 
+  mutate(Attendance = "") %>% 
+  select(-relpath, -prefix, -type, -pid) %>% 
+  select(17, 18, 16, 15, 19, everything())
+```
 
-str_extract("\\w+\\s\\d{1,2},\\s\\d{4}") %>% lubridate::mdy()
+Upload to Google as a sheet
 
-attendees_header %>% spread(X1, X2) %>% select(Date) %>% mdy()
+```{r upload_to_googledrive, eval=params$upload, include=params$upload}
+sheetname <- paste(for_goog$`Workshop Name`[1], for_goog$`Workshop Date`[1], sep = "_")
+local_filename <- str_remove_all(sheetname, "[:\\.\\s,]")
+local_filename <- path_ext_set(local_filename, "csv")
+
+write_csv(for_goog, path("data", local_filename))
+
+drive_upload(path("data", local_filename), name = sheetname, type = "spreadsheet")
+```
+
+
+## email list as .csv -- to paste into dvs-announce list
+
+```{r build-and-write-dvsannounce-list}
+roster2%>% 
+  filter(`Would you like to receive more information about DVS events and training?` == "Yes") %>% 
+  select(Email) %>% 
+  arrange(Email) %>% 
+  write_delim("outfile/dvs-announce_append-email.txt", col_names = FALSE)
 ```
 
 
