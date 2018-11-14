@@ -1,9 +1,20 @@
+---
+title: "Workshop Attendees"
+subtitle: "Produce Roster for printing via Excel ; Visualize Attendance"
+output: html_notebook
+date: "`r Sys.Date()`"
+---
 
 ## Load Packages
 
-```{r packages}
+```{r packages, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(fs)
+library(viridis)
+library(knitr)
+library(kableExtra)
+library(lubridate)
+library(googledrive)
 ```
 
 ## Import Data
@@ -12,7 +23,7 @@ library(fs)
 
 Instructor will download the registered and waitlist files from libcal (SpringShare).  Below, the instructor will choose the location of these files on the filesystem.  
 
-```{r import-registration-data}
+```{r import-registration-data, message=FALSE, warning=FALSE}
 files_table <- as_tibble(path_rel(choose.files()))
 
 full_file_names <- files_table %>% 
@@ -21,177 +32,245 @@ full_file_names <- files_table %>%
                     fixed("csv", ignore_case = TRUE))) %>% 
   mutate(reg_data = map(relpath, read_csv, skip = 9)) %>% 
   unnest()
-  
-
-full_file_names  
 ```
 
 ### Workshop Metadata
 
-```{r roster-header}
+```{r roster-header, message=FALSE, warning=FALSE}
 attendees_header <- read_csv(head(files_table$value, 1), 
                              skip=1, n_max = 7, 
-                             col_names = FALSE) %>% 
-  spread(X1, X2)
+                             col_names = FALSE) 
+```
 
-attendees_header
+## Write Roster
 
+First, make example record
 
+```{r anton}
+example <- tibble(
+  `Last Name` = "CHIGURH", 
+  `First Name` = "ANTON", 
+  Attendance = "X",
+  Email = "cipher@cloud.net", 
+  `Status` = "EXAMPLE", 
+  `Discipline` = "EXAMPLE", 
+  Registration = "EXAMPLE")
 
 ```
 
-
-
-``` r
-  mutate(data_dir = path_dir(relpath)) %>% 
-  mutate(data_filename = path_file(relpath)) %>% 
-  mutate(metadata_filename = str_replace(relpath, 
-                                   "wait_list", 
-                                   "waitlist")) %>% 
-  mutate(metadata_filename = str_extract(metadata_filename,
-                           "lc_\\w+_\\d+")) %>% 
-  separate(metadata_filename, 
-           into = c("prefix", "type", "workshop_id")) %>% 
-  separate(workshop_id, 
-           into = c("workshop_id", "download_date", "pid"), 
-           sep = c(7,15))
-
-glimpse(full_file_names)
-
-```
-
-
-
-
+Prepare and Wrangle Roster tibble for print-to-outfile via post-process printing/formatting via Excel
 
 ```{r}
-files_table <- as_tibble(path_rel(choose.files()))
-full_file_names <- files_table %>% 
-  rename(relpath = value) %>% 
-  mutate(data_dir = path_dir(relpath)) %>% 
-  mutate(data_file = path_file(relpath)) %>% 
-  mutate(metadata_filename = str_replace(relpath, 
-                                   "wait_list", 
-                                   "waitlist")) %>% 
-  mutate(metadata_filename = str_extract(metadata_filename,
-                           "lc_\\w+_\\d+")) %>% 
-  separate(metadata_filename, 
-           into = c("prefix", "type", "workshop_id")) %>% 
-  separate(workshop_id, 
-           into = c("workshop_id", "download_date", "pid"), 
-           sep = c(7,15))
+roster <- full_file_names %>% 
+  select(`Last Name`, `First Name`, `Email`, 
+         Status = `Academic Status (or other)`, 
+         Discipline = `Discipline or Affiliation`,
+         relpath) %>% 
+  mutate(Registration = str_to_title(str_extract(relpath, "(attendees|wait_list)"))) %>% 
+  select(-relpath) %>% 
+  arrange(`Last Name`) 
 ```
 
 
+Combine Roster with Example record
+
+```{r}
+roster <- bind_rows(example, roster) 
+roster$Attendance <- replace_na(roster$Attendance, " ")
+```
+
+### Write/Export CSV File 
+
+... for import into Excel because the formatting printing just seems nicer, albeit manual.  In excel, I use the **format tables** option to format the roster.  I also **print options** to set **landscape orientation** and **scale to fit all columns** on one page.
+
+I could use `knitr::kable()` to print this out here, but this is a rare instance where I prefer the Microsoft approach.  Feel free to develop that if you like.
+
+```{r write-roster}
+# Create attendance CSV file
+attendees_header %>% 
+  write_excel_csv("outfile/attendance-roster.csv", col_names = FALSE)
+
+# append blank line to attendance CSV file
+write_excel_csv(tibble(" "), "outfile/attendance-roster.csv", append = TRUE)
+
+# append the Roster tibble 
+write_excel_csv(roster, "outfile/attendance-roster.csv", append = TRUE, col_names = TRUE)
+
+```
 
 
+## Visualize Attedance
+
+```{r echo=FALSE}
+knitr::kable(attendees_header %>% rename(" " = X1, "  " = X2)) %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) 
+```
 
 
+```{r wrangle data, include=FALSE}
+roster2 <- full_file_names %>% 
+  rename(status = `Academic Status (or other)`) %>% 
+  rename(patron = `Have you consulted with Data and Visualization Services before this workshop?`) %>% 
+  rename(advertizing_source = 'Where did you hear about this event?') %>% 
+  rename(affiliate = "Are you affiliated with Duke University, Duke Medical Center, DCRI, or another Duke group?") %>% 
+  rename(interest = "I'm interested in registering for this workshop because:") %>% 
+  rename(discipline = `Discipline or Affiliation`) %>% 
+  filter(status != "Perpetual") %>% 
+  mutate(discipline = case_when(
+    discipline == "African and African American Studies" ~ "Afr",
+    discipline == "Art, Art History, and Visual Studies" ~ "Art",
+    discipline == "Asian and Middle Eastern Studies" ~ "Asia",
+    discipline == "Biology" ~ "Bio",
+    discipline == "Center for Documentary Studies" ~ "Document",
+    discipline == "Chemistry" ~ "Chem",
+    discipline == "Classical Studies" ~ "Classics",
+    discipline == "Computer Science" ~ "CS",
+    discipline == "Cultural Anthropology" ~ "Anthro", 
+    discipline == "Dance" ~ "Dance",
+    discipline == "Divinity School" ~ "Div",
+    discipline == "Duke University Health System (DUHS)" ~ "DUHS",
+    discipline == "Economics" ~ "Econ",
+    discipline == "Education (Program in Education)" ~ "Edu",
+    discipline == "Engineering (Pratt School of Engineering)" ~ "Engr",
+    discipline == "English" ~ "Engl",
+    discipline == "Evolutionary Anthropology" ~ "Evol-Antro",
+    discipline == "Fuqua School of Business" ~ "Fuqua",
+    discipline == "Gender, Sexuality, and Feminist Studies" ~ "Gender",
+    discipline == "Germanic Languages and Literature" ~ "German",
+    discipline == "Graduate Liberal Studies" ~ "Liberal",
+    discipline == "History" ~ "Hist",
+    discipline == "International Comparative Studies" ~ "Comparative Lit",
+    discipline == "Law School" ~ "Law",
+    discipline == "Linquistics" ~ "Linquistics",
+    discipline == "Literature" ~ "Lit", 
+    discipline == "Masters in Interdisciplinary Data Science" ~ "DS",
+    discipline == "Mathematics" ~ "Math",
+    discipline == "Music" ~ "Music",
+    discipline == "Neuroscience" ~ "Neuroscience",
+    discipline == "Nicholas School of the Environment" ~ "Nicholas",
+    discipline == "Philosophy" ~ "Phil",
+    discipline == "Physics" ~ "Physics",
+    discipline == "Political Science" ~ "Poli Sci",
+    discipline == "Population Health Sciences"~ "Health Sci",
+    discipline == "Psychology and Neuroscience" ~ "Psych/Neuro",
+    discipline == "Religious Studies" ~ "Relgion",
+    discipline == "Romance Studies" ~ "Romance",
+    discipline == "Sanford School of Public Policy" ~ "Sanford",
+    discipline == "Slavic and Eurasian Studies" ~ "Slavic",
+    discipline == "School of Medicine" ~ "Medicine",
+    discipline == "School of Nursing" ~ "Nursing",
+    discipline == "Sociology" ~ "Sociology",
+    discipline == "Statistical Science" ~ "Stats",
+    discipline == "Theatre Studies" ~ "Theater",
+    discipline == "Other / None" ~ "Other"
+    )) %>% 
+  mutate(status = fct_infreq(status, ordered = TRUE) ) %>% 
+  mutate(discipline = fct_infreq(discipline, ordered = TRUE))
+```
 
-## WTF
-https://serialmentor.com/blog/2016/6/13/reading-and-combining-many-tidy-data-files-in-R
+```{r wrangle interest inventory, include=FALSE}
+interest_inventory <- roster2 %>% 
+  mutate(id = paste(`Last Name`, `First Name`, sep = "_")) %>% 
+  select(id, status, discipline, interest) %>% 
+  mutate(interest = na_if(interest, "-")) %>% 
+  separate_rows(interest, sep = ",") %>% 
+  mutate(interest = trimws(interest)) %>% 
+  drop_na(interest) %>%   
+  mutate(interest = case_when(
+    interest == "I believe this topic is important for my career goals" ~ "Career",
+    interest == "This topic is directly relevant to a course or project I'm pursuing" ~ "Course/Project",
+    interest == "I am generally curious about the topic" ~ "Curious",
+    interest == "I have enjoyed past DVS workshops" ~ "Loyalist",
+    interest == "Other" ~ "Other"
+  )) %>% 
+  mutate(interest = fct_infreq(interest, ordered = TRUE))
+```
+
+```{r echo=FALSE}
+ggplot(roster2) +
+  geom_bar(aes(x = fct_rev(status), 
+               fill = fct_rev(patron)),
+           color = "black") +
+  scale_fill_viridis(discrete = TRUE) +
+  coord_flip() +
+  labs(y = "",
+       x = "Status",
+       title = "DVS Patron Status",
+       fill = "Patron")
+```
 
 
-
-
-
-
-
-
-``` r
-#library(here)
-#files_chosen <- choose.files()
-#file_info(files_chosen)
-#path_split(files_chosen)
-#path_rel(files_chosen)
-
-#last(str_split(path_rel(files_chosen), "/"))
-#files_chosen <- choose.files()
-
-
+```{r echo=FALSE}
+roster2 %>% 
+  mutate(discipline = fct_lump(discipline, n = 9)) %>% 
+  ggplot() +
+  geom_bar(aes(x = fct_rev(discipline), 
+               fill = fct_rev(status)),
+           color = "black") +
+  coord_flip() +
+  theme(axis.text.y = element_text(angle = 45),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank()) +
+  guides(fill=guide_legend(title="Status")) +
+  labs(title = "Attendance by Discipline")
   
-####file_parts <- str_extract(full_file_names, "lc_\\w+_.*\\.csv")
-#file_names
-#file_names <- str_replace(file_names, "wait_list", "waitlist")
-#files <- as_tibble(str_split(full_file_names$metadata_filename, 
-#                             "_", simplify = T))
-#files
-
-#fs::path_rel(full_file_names)
-
-###  path_file(full_file_names)
-###  path_dir(full_file_names)
-
-#file_names
-#file_info(files_chosen)$path
-#path_sanitize(files_chosen)
-#path_tidy(files_chosen)
-#file_show()
-#here::here()
-
-#dir_ls(choose.dir(), type="file", glob = "*.csv")
-#dir_ls(choose.dir(), type="file", regexp = "lc_attend")
-```
-
-``` r
-files <- files %>% 
-  rename(prefix = V1, type = V2, id = V3) %>% 
-  #mutate(id = if_else(id == "list", id2, id)) %>% 
-  mutate(type = if_else(type == "waitlist", 
-                        "wait_list", type)) %>% 
-  mutate(download_date = str_sub(id, 8, -5)) %>% 
-  mutate(course_id = str_sub(id, 1,7)) %>% 
-  mutate(file_name = paste0(prefix, "_", 
-                            type, "_", course_id, 
-                            download_date, ".csv")) %>% 
-  select(-id) %>% 
-  arrange(type)
-
-files
 ```
 
 
-###  Load Data Files
-``` r 
-files <- as_tibble(str_split(list.files(data_dir), 
-                             "_", simplify = T, 4))
-
-files
-```
-
-### As Data Frame
-
-Organize the filesystem data into a data frame
-
-``` r 
-
-files <- files %>% 
-  rename(prefix = V1, type = V2, id = V3, id2 = V4) %>% 
-  mutate(id = if_else(id == "list", id2, id)) %>% 
-  mutate(type = if_else(type == "wait", 
-                        "wait_list", type)) %>% 
-  mutate(download_date = str_sub(id, 8, -5)) %>% 
-  mutate(course_id = str_sub(id, 1,7)) %>% 
-  mutate(file_name = paste0(data_dir, 
-                            "/", prefix, "_", 
-                            type, "_", course_id, 
-                            download_date, ".csv")) %>% 
-  select(-id2, -id) %>% 
-  arrange(type)
-
-files
+```{r echo=FALSE}
+interest_inventory %>% 
+  ggplot() +
+  geom_bar(aes(x = fct_rev(interest), 
+               fill = fct_rev(status)),
+           color = "black") +
+  coord_flip() +
+  labs(y = "",
+       x = "Interest",
+       title = "DVS Patron Interest Questionnaire",
+       fill = "Status")
 ```
 
 
-###  Attendees as a Data Frame
-
-Generate metadata about the Attendees (confirmed) filename
-
-``` r
-attendees_file_path <- files %>% 
-  filter(type == "attendees") %>% 
-  select(file_name, course_id)
-
-attendees_file_path
+```{r echo=FALSE}
+interest_inventory %>% 
+  ggplot() +
+  geom_bar(aes(fct_rev(fct_lump(fct_infreq(discipline), prop = 0.02)),
+               fill = fct_rev(interest)),
+           color = "black") +
+  coord_flip() +
+  labs(y = "",
+       x = "Discipline",
+       title = "Questionnaire by Discipline",
+       fill = "Interest")
 ```
+
+
+## Upload to Google Drive
+
+```{r}
+for_goog <- full_file_names %>% 
+  mutate("Workshop Name" = attendees_header %>% spread(X1, X2) %>% select(Event) %>% toString()) %>% 
+  mutate("Workshop Date" = attendees_header %>% spread(X1, X2) %>% select(Date) %>% mdy()) %>% 
+  mutate(`Attended (x or blank)` = " ") %>% 
+  #rename(`Registration Status (Registered, Waitlist, or Walk-in)` = "Registration Status") %>% 
+  rename(`Booking Made` = `Booking made`)
+  #select("Workshop Name", "Workshop Date") 
+for_goog  
+  
+  mutate(`Workshop Date` = attendees_header %>% 
+           filter(X1 == "Date") %>% 
+           select(X2) %>% 
+           unname()) %>% 
+  select()
+  
+  
+attendees_header %>% spread(X1, X2) %>% select(Event) %>% toString()
+
+str_extract("\\w+\\s\\d{1,2},\\s\\d{4}") %>% lubridate::mdy()
+
+attendees_header %>% spread(X1, X2) %>% select(Date) %>% mdy()
+```
+
+
+
 
