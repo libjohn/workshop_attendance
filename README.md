@@ -11,13 +11,14 @@ Run this from the console
     - by default this script **will not upload to Google Drive**
     - the script will prompt you to find the file(s) on your local file system (step 1)
 
+
 Alternatively, To **upload the GoogleSheet** to Google Drive, run the following from the R console:
 
 A. rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))
 
 ### Attendance Sheet
 
-You must first download the registration file from SpringShare > LibCal > <your event> >  Manage Event > Excel
+You must first download the registration file from SpringShare > LibCal > *your event* >  Manage Event > Excel
 
 
 ## Outputs
