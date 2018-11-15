@@ -6,17 +6,26 @@
 Put your LibCal Registration Data in a the `data` subdirectory
 
 Run this from the console
-1. `rmarkdown::render("01_make-attendance-roster.Rmd")`
-1. `rmarkdown::render("01_next_visualize_attendees.Rmd")`
-1. `rmarkdown::render("02_write-to-googlesheets.Rmd")`
+1. `rmarkdown::render("libcal_roster.Rmd")`
+
+    - by default this script **will not upload to Google Drive**
+    - The Script will prompt you to find the file(s) on your local file system
+
+Alternatively, To **upload the GoogleSheet** to Google Drive, run the following from the R console:
+
+1. rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))
 
 ### Attendance Sheet
 
-Look in `outfile` subdirectory for output.
+You must first download the registration file from SpringShare > LibCal > <<your event>> >  Manage Event > Excel
 
-- `outfile/attedance-roster.csv`
 
----
+## Outputs
+
+- **Roster** for Attendance that can be printed via MS Excel
+- **visualization** that summarizes the registrees (printable)
+- GoogleSheet -- Transformed roster that is uploaded to Google Drive as a Sheet
+- **Email List Newbies** -- list of people who want to be subscribed to the mailing lists
 
 ## Goal of these scripts
 
@@ -24,19 +33,15 @@ These scripts transform springshare libcal registration data.
 
 There are two goals: transform and automate attendance file movement.
 
-1. Transform the Springshare-registration data to produce a paper roster (a form attendees can use to sign-in when attending a workshop.)
-    - libcal --> Rstudio --> msExcel Attendance File
+1. Transform the Springshare-registration data to produce a paper roster that can be used to track workshop attendance.
+
 2. Transform the Springshare-registration data into a format which Joel requested for deposit in Google Drive.  Script will upload transformed data frame to Google Drive as a Google Sheet
-    - libcal --> RStudio --> GoogleDrive
+
+> libcal --> RStudio --> GoogleDrive
 
 ## Assumptions:
 
-- You have already downloaded the 1-3 registration files from Springshare and have not changed the filenames
-- Your Springshare data files are located inside the "data" subdirectory of the R project directory
-- There are no more than three files inside the data directory
-    - one attendees file, one waitlist file, one cancellations file
-    - the attendees file is mandatory
-    - you can put each workshop file-set in a subdirectory of the data directory.  
+- You have already downloaded the registration files from Springshare and have not changed the filenames
 - No user data will be uploaded to GitLab or GitHub
     - use `.gitignore` to prevent uploading user data
     - User data on your personal machine is your responsibility
@@ -48,56 +53,29 @@ There are two goals: transform and automate attendance file movement.
 ### Make a `data` and `outfile` subdirectory 
 
 1. Clone this repository as a new project in RStudio
-1. Using the RStudio *git* tab, **Pull** the repo to update code
-1. [In RStudio,] Files > New Folder > `data`
-1. [In RStudio,] Files > New Folder > `outfile`
-1. Download your Springshare registration data to your newly created `data` directory
+1. Download your Springshare registration data 
+1. Run this script in the R Console
 
-### A. Make Attendance Roster
-
-1. First, download your data from LibCal; place data inside the `data` directory of your RStudio Project 
+    - `rmarkdown::render("libcal_roster.Rmd")`
+    - You will be prompted to find the downloaded roster
+    - The default will not upload to Google
     
-    - You can also make subdirectories inside the data directory.
-        
-1. Open RStudio with Console as your active quadrant.  At the console, run the script:
+        - To Upload to Google...   `rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))`
 
-    - `rmarkdown::render("01_make-attendance-roster.Rmd")`
+
+### Where to Find the Outputs
+
+- Roster is in the `outfile` directory
     
-1. Look in the `outfile` subdirectory to find your output:  `attendance-roster.csv`
-
-    - Open In MS Excel
-    - Format with "Format As Table" Option
-    - Print Options:  Landscape Orientation, and **Scaling** set to "Fit All Columns on One Page"
-
-### B. Write Roster to Google-Drive, then Mark Attendance.  Add Email Addresses to DVS-Announce
-
-This script will **Transform libcal files** (which you manually downloaded), **write to Google Drive**, and **produce dvs-annouce list**.
-
-1. Download your attendance, waitlist, and cancellation data from LibCal; place data inside the `data` directory of your RStudio Project 
-        
-1. Open RStudio with Console as your active quadrant.  At the console, run the script: 
-
-    - `rmarkdown::render("02_write-to-googlesheets.Rmd")`
-
-
-
-#### This Write to Google Scheets script does two things...
-
-1. Converts your attendance to a Google Sheet in your Google Drive space.  
-
-    - See [At Google Drive](#at-google-drive) section to complete this manual process
-        
-1. Produces an Email Addresses to DVS-Announce txt file
-
-    - The `dvs-announce_append-email.txt` file can be found in the `outfile` subdirectory of the RStudio Project
+    - Open in Excel
+    - Use Excel to **Format Tables** 
+    - Use Excel Print functions to change to Landscape & scale all columns to one page in the `dvs-announce_append-email.txt`
     
-        1. Open the resulting TXT file then copy the addresses into your clipboard buffer
-        1. Go to the DVS Sympa List (DVS-Announce) and then bulk-add the addresses
-        
-##### At Google Drive:
-1. Manually move the processed and uploaded registration file from your MyDrive space to Joel's predefined location
-    - `My Drive > Data and Visualization Services > Workshops > [Spring 2017] > Assessment`
-1. The [codebook](https://docs.google.com/document/d/1MzJVkMQhAespElJ-JPT8PotqGPmZesk7FbvVTNv5Fo8/edit) defines where you will manually mark attendance, waitlist, and walk-ins.  You can use the paper Roster to help you complete this section.  
+- Visualization will be in the RSTudio project root (workshop_attendance), as libcal_roster.nb.html.  Just print the selected page
 
-Note: The process of uploading the files can take several minutes.  The length of time seems to be related to the length of the list, i.e. how many people registered and waitlisted for the workshop.  A 100 person list can take about 35-45 seconds.  
+- Google Sheet will be in your Google Drive main folder.
+
+    - First time user will have to monitor the R Console for messages about authentication
+
+
 
