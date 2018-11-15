@@ -293,6 +293,7 @@ for_goog <- full_file_names %>%
   rename(`Booking Made` = `Booking made`) %>% 
   mutate(Attendance = "") %>% 
   select(-relpath, -prefix, -type, -pid) %>% 
+  arrange(`Last Name`) %>% 
   select(17, 18, 16, 15, 19, everything())
 ```
 

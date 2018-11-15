@@ -3,21 +3,21 @@
 
 ## Quick Start
 
-Put your LibCal Registration Data in a the `data` subdirectory
+1. Download your LibCal Registration Data
 
 Run this from the console
-1. `rmarkdown::render("libcal_roster.Rmd")`
+2. `rmarkdown::render("libcal_roster.Rmd")`
 
     - by default this script **will not upload to Google Drive**
-    - The Script will prompt you to find the file(s) on your local file system
+    - the script will prompt you to find the file(s) on your local file system (step 1)
 
 Alternatively, To **upload the GoogleSheet** to Google Drive, run the following from the R console:
 
-1. rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))
+A. rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))
 
 ### Attendance Sheet
 
-You must first download the registration file from SpringShare > LibCal > <<your event>> >  Manage Event > Excel
+You must first download the registration file from SpringShare > LibCal > <your event> >  Manage Event > Excel
 
 
 ## Outputs
@@ -25,7 +25,7 @@ You must first download the registration file from SpringShare > LibCal > <<your
 - **Roster** for Attendance that can be printed via MS Excel
 - **visualization** that summarizes the registrees (printable)
 - GoogleSheet -- Transformed roster that is uploaded to Google Drive as a Sheet
-- **Email List Newbies** -- list of people who want to be subscribed to the mailing lists
+- **Email List of Newbies** -- list of people who want to be subscribed to the mailing lists
 
 ## Goal of these scripts
 
@@ -67,11 +67,19 @@ There are two goals: transform and automate attendance file movement.
 
 - Roster is in the `outfile` directory
     
-    - Open in Excel
+    - Open in Excel:  `attendance-roster.csv`
     - Use Excel to **Format Tables** 
-    - Use Excel Print functions to change to Landscape & scale all columns to one page in the `dvs-announce_append-email.txt`
+    - Use Excel Print functions
     
-- Visualization will be in the RSTudio project root (workshop_attendance), as libcal_roster.nb.html.  Just print the selected page
+        - Change to Landscape 
+        - Scale all columns to one page in the 
+    
+- Visualization will be in the RStudio project root (workshop_attendance), as libcal_roster.nb.html.  Just print the selected page
+
+- Email List is in the `outfile` directory
+
+    - `dvs-announce_append-email.txt`
+    - This list is possible because we prompt patrons for this during the springshare registration process
 
 - Google Sheet will be in your Google Drive main folder.
 
