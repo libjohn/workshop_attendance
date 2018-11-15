@@ -4,8 +4,12 @@ subtitle: "Produce Roster for printing via Excel ; Visualize Attendance"
 output: html_notebook
 date: "`r Sys.Date()`"
 params:
-  upload: FALSE  # if you want to upload to google, change this option to TRUE
+  upload_googlesheets: FALSE  # if you want to upload to google, change this option to TRUE or see https://rmarkdown.rstudio.com/lesson-6.html
 ---
+
+To Run this file, at the R console, **AND upload as a googleSheet**
+
+`rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))`
 
 ## Load Packages
 
@@ -29,6 +33,7 @@ waitlist_fix = function(var1) {
 extract_toTitle = function(var1, word_set) {
   str_to_title(str_extract(var1, word_set))
 }
+
 ```
 
 
@@ -45,7 +50,8 @@ full_file_names <- files_table %>%
   rename(relpath = value) %>% 
   filter(str_detect(path_ext(relpath), 
                     fixed("csv", ignore_case = TRUE))) %>% 
-  mutate(reg_data = map(relpath, read_csv, skip = 9)) %>% 
+  mutate(reg_data = 
+           map(relpath, read_csv, skip = 8)) %>%  # jrl was 9
   unnest()
 ```
 
@@ -67,8 +73,8 @@ example <- tibble(
   `First Name` = "ANTON", 
   Attendance = "X",
   Email = "cipher@cloud.net", 
-  `Status` = "EXAMPLE", 
-  `Discipline` = "EXAMPLE", 
+  Status = "EXAMPLE", 
+  Discipline = "EXAMPLE", 
   Registration = "EXAMPLE")
 
 ```
@@ -76,6 +82,11 @@ example <- tibble(
 Prepare and Wrangle Roster tibble for print-to-outfile via post-process printing/formatting via Excel
 
 ```{r}
+# jrl rename colnames b/c shpringshare changed var format late 2019
+colnames(full_file_names) <- full_file_names %>% 
+  colnames() %>% 
+  str_replace_all("^\\d{1,2}\\s", "")
+
 roster <- full_file_names %>% 
   select(`Last Name`, `First Name`, `Email`, 
          Status = `Academic Status (or other)`, 
@@ -268,7 +279,11 @@ Wrangle the content and order of the Tibble variables
 ```{r}
 for_goog <- full_file_names %>% 
   mutate("Workshop Name" = attendees_header %>% spread(X1, X2) %>% select(Event) %>% toString()) %>% 
-  mutate("Workshop Date" = attendees_header %>% spread(X1, X2) %>% select(Date) %>% mdy()) %>% 
+  mutate("Workshop Date" = attendees_header %>% 
+           spread(X1, X2) %>% 
+           select(`Date & Time`) %>% 
+           str_replace("^\\d+.*pm,\\s", "") %>% 
+           mdy()) %>%   # jrl fix date grab b/c springshare changed format
   mutate(`Attended (x or blank)` = " ") %>% 
   mutate(relpath = waitlist_fix(relpath)) %>% 
   mutate(`Registration Status (Registered, Waitlist, or Walk-in)` = extract_toTitle(relpath, "(attendees|waitlist)")) %>% 
@@ -281,11 +296,11 @@ for_goog <- full_file_names %>%
   select(17, 18, 16, 15, 19, everything())
 ```
 
-Upload to Google as a sheet
+Upload to Google as a googlesheet.  First time through, run this manually, look in the console to answer the .httr_auth
 
-```{r upload_to_googledrive, eval=params$upload, include=params$upload}
+```{r upload_to_googledrive, eval=params$upload_googlesheets}
 sheetname <- paste(for_goog$`Workshop Name`[1], for_goog$`Workshop Date`[1], sep = "_")
-local_filename <- str_remove_all(sheetname, "[:\\.\\s,]")
+local_filename <- str_remove_all(sheetname, "[^a-z,A-Z,0-9]")
 local_filename <- path_ext_set(local_filename, "csv")
 
 write_csv(for_goog, path("data", local_filename))
