@@ -14,7 +14,7 @@ Run this from the console
 
 Alternatively, To **upload the GoogleSheet** to Google Drive, run the following from the R console:
 
-A. rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))
+A. `rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))`
 
 ### Attendance Sheet
 

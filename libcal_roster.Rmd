@@ -34,6 +34,9 @@ extract_toTitle = function(var1, word_set) {
   str_to_title(str_extract(var1, word_set))
 }
 
+registered_translation = function(var1, word1, newword) {
+  mutate(var1 = if_else(var1 == word1, word1, newword))
+}
 ```
 
 
@@ -94,6 +97,8 @@ roster <- full_file_names %>%
          relpath) %>% 
   mutate(relpath = waitlist_fix(relpath)) %>% 
   mutate(Registration = extract_toTitle(relpath, "(attendees|waitlist)")) %>% 
+  mutate(Registration = if_else(
+    Registration == "Attendees", "Registered", Registration)) %>% 
   select(-relpath) %>% 
   arrange(`Last Name`) 
 ```
@@ -287,6 +292,10 @@ for_goog <- full_file_names %>%
   mutate(`Attended (x or blank)` = " ") %>% 
   mutate(relpath = waitlist_fix(relpath)) %>% 
   mutate(`Registration Status (Registered, Waitlist, or Walk-in)` = extract_toTitle(relpath, "(attendees|waitlist)")) %>% 
+  mutate(`Registration Status (Registered, Waitlist, or Walk-in)` =
+           if_else(`Registration Status (Registered, Waitlist, or Walk-in)` == "Attendees", 
+                   "Registered", 
+                   `Registration Status (Registered, Waitlist, or Walk-in)`)) %>% 
   mutate(metadata_filename = str_extract(relpath, "lc_\\w+_\\d+")) %>%
   separate(metadata_filename, into = c("prefix", "type", "workshop_id")) %>% 
   separate(workshop_id, into = c("WorkshopID", "pid"), sep = c(7)) %>% 
