@@ -310,7 +310,7 @@ Upload to Google as a googlesheet.  First time through, run this manually, look 
 
 ```{r upload_to_googledrive, eval=params$upload_googlesheets}
 sheetname <- paste(for_goog$`Workshop Name`[1], for_goog$`Workshop Date`[1], sep = "_")
-local_filename <- str_remove_all(sheetname, "[^a-z,A-Z,0-9]")
+local_filename <- str_remove_all(sheetname, "[^a-zA-Z0-9]")
 local_filename <- path_ext_set(local_filename, "csv")
 
 write_csv(for_goog, path("data", local_filename))
