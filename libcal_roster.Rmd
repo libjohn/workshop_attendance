@@ -7,7 +7,12 @@ params:
   upload_googlesheets: FALSE  # if you want to upload to google, change this option to TRUE or see https://rmarkdown.rstudio.com/lesson-6.html
 ---
 
-To Run this file, at the R console, **AND upload as a googleSheet**
+Run this as an attendance roster file generator, at the R console:
+
+
+> **`rmarkdown::render("libcal_roster.Rmd")`**
+
+Alternatively, run this to **upload as a googleSheet**
 
 `rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))`
 
