@@ -6,7 +6,7 @@
 1. Download your LibCal Registration Data
 
 Run this from the console
-2. `rmarkdown::render("libcal_roster.Rmd")`
+2. **`rmarkdown::render("libcal_roster.Rmd")`**
 
     - by default this script **will not upload to Google Drive**
     - the script will prompt you to find the file(s) on your local file system (step 1)
