@@ -67,7 +67,7 @@ full_file_names <- files_table %>%
 
 ```{r roster-header, message=FALSE, warning=FALSE}
 attendees_header <- read_csv(head(files_table$value, 1), 
-                             skip=1, n_max = 7, 
+                             skip=1, n_max = 6, 
                              col_names = FALSE) 
 ```
 
@@ -77,9 +77,10 @@ First, make example record
 
 ```{r anton}
 example <- tibble(
+  Attendance = "X",
   `Last Name` = "CHIGURH", 
   `First Name` = "ANTON", 
-  Attendance = "X",
+  #Attendance = "X",
   Email = "cipher@cloud.net", 
   Status = "EXAMPLE", 
   Discipline = "EXAMPLE", 
@@ -302,9 +303,9 @@ for_goog <- full_file_names %>%
                    "Registered", 
                    `Registration Status (Registered, Waitlist, or Walk-in)`)) %>% 
   mutate(metadata_filename = str_extract(relpath, "lc_\\w+_\\d+")) %>%
-  separate(metadata_filename, into = c("prefix", "type", "workshop_id")) %>% 
-  separate(workshop_id, into = c("WorkshopID", "pid"), sep = 8) %>%
-  mutate(WorkshopID = "999999") %>% 
+  separate(metadata_filename, into = c("prefix", "type", "WorkshopID", "pid")) %>% 
+  #separate(workshop_id, into = c("WorkshopID", "pid"), sep = 8) %>%
+  #mutate(WorkshopID = "999999") %>% 
   rename(`Booking Made` = `Booking made`) %>% 
   mutate(Attendance = "") %>% 
   select(-relpath, -prefix, -type, -pid) %>% 
