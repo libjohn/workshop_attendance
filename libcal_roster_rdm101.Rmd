@@ -59,19 +59,27 @@ files_table <- tibble(path_rel(choose.files())) %>%
 full_file_names <- files_table %>% 
 #  rename(relpath = value) %>% 
   filter(str_detect(path_ext(relpath), 
-                    fixed("csv", ignore_case = TRUE))) %>% 
+                    fixed("xlsx", ignore_case = TRUE))) %>% 
   mutate(reg_data = 
-           map(relpath, read_csv, skip = 8)) %>%  # jrl was 9
+           map(relpath, readxl::read_excel, skip = 8)) %>%  # jrl was 9
   unnest()
 ```
 
 ### Workshop Metadata
 
-```{r roster-header, message=FALSE, warning=FALSE}
+```
 attendees_header <- read_csv(head(files_table$relpath, 1), 
                               skip=1, n_max = 6, 
                               col_names = FALSE) 
 ```
+
+
+```{r}
+attendees_header <- readxl::read_excel("data/RDM101_Registrations.xlsx", 
+    skip = 1, n_max = 6)
+attendees_header
+```
+
 
 
 ## Write Roster
@@ -142,7 +150,7 @@ write_excel_csv(roster, "outfile/attendance-roster.csv", append = TRUE, col_name
 
 ## Visualize Attedance
 
-```{r echo=FALSE}
+```r
 knitr::kable(attendees_header %>% rename(" " = X1, "  " = X2)) %>% 
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) 
 ```
