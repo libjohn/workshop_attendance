@@ -151,7 +151,7 @@ knitr::kable(attendees_header %>% rename(" " = X1, "  " = X2)) %>%
 ```{r wrangle data, include=FALSE}
 roster2 <- full_file_names %>% 
   rename(status = `Academic Status (or other)`) %>% 
-  rename(patron = `Have you consulted with Data and Visualization Services before this workshop?`) %>% 
+  rename(patron = `Have you consulted with the Center for Data and Visualization Sciences before this workshop?`) %>% 
   rename(advertizing_source = 'Where did you hear about this event?') %>% 
   rename(affiliate = "Are you affiliated with Duke University, Duke Medical Center, DCRI, or another Duke group?") %>% 
   rename(interest = "I'm interested in registering for this workshop because:") %>% 
@@ -333,7 +333,7 @@ drive_upload(path("data", local_filename), name = sheetname, type = "spreadsheet
 
 ```{r build-and-write-dvsannounce-list}
 roster2%>% 
-  filter(`Would you like to receive more information about DVS events and training?` == "Yes") %>% 
+  filter(`Would you like to receive more information about CDVS events and training?` == "Yes") %>% 
   select(Email) %>% 
   arrange(Email) %>% 
   write_delim("outfile/dvs-announce_append-email.txt", col_names = FALSE)
