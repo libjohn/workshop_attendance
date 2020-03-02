@@ -4,7 +4,7 @@ subtitle: "Produce Roster for printing via Excel ; Visualize Attendance"
 output: html_document
 date: "`r Sys.Date()`"
 params:
-  upload_googlesheets: FALSE  # if you want to upload to google, change this option to TRUE or see https://rmarkdown.rstudio.com/lesson-6.html
+  upload_googlesheets: FALSE  # if you want to upload to google, change this option to TRUE or see https://rmarkdown.rstudio.com/lesson-6.html  ## See more on INTERACTIVE parameters: https://bookdown.org/yihui/rmarkdown/params-knit.html#the-interactive-user-interface
 ---
 
 Run this as an attendance roster file generator, at the R console:
