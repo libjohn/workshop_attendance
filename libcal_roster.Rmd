@@ -11,7 +11,8 @@ Run this as an attendance roster file generator, at the R console:
 
 
 ```r
-rmarkdown::render("libcal_roster.Rmd", output_file = paste("outfile/roster_summary, Sys.Date(), sep="_"))
+rmarkdown::render("libcal_roster.Rmd", output_file = 
+    paste("outfile/roster_summary", Sys.Date(), sep="_"))
 ```
 
 Alternatively, run this to **upload as a googleSheet**
