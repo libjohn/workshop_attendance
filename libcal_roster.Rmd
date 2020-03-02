@@ -1,7 +1,7 @@
 ---
 title: "Workshop Attendees"
 subtitle: "Produce Roster for printing via Excel ; Visualize Attendance"
-output: html_notebook
+output: html_document
 date: "`r Sys.Date()`"
 params:
   upload_googlesheets: FALSE  # if you want to upload to google, change this option to TRUE or see https://rmarkdown.rstudio.com/lesson-6.html
@@ -10,11 +10,17 @@ params:
 Run this as an attendance roster file generator, at the R console:
 
 
-> **`rmarkdown::render("libcal_roster.Rmd")`**
+```r
+rmarkdown::render("libcal_roster.Rmd", output_file = paste("outfile/roster_summary, Sys.Date(), sep="_"))
+```
 
 Alternatively, run this to **upload as a googleSheet**
 
-`rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))`
+```
+# for upload to Google Drive
+rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))
+```
+
 
 ## Load Packages
 
