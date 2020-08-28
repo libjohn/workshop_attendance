@@ -292,7 +292,8 @@ roster2 %>%
   theme_ipsum(grid = "X") +
   theme(#axis.text.y = element_text(angle = 45),
         plot.title.position = "plot") +
-  guides(fill=guide_legend(title="Status")) +
+  guides(fill=guide_legend(title="Status", 
+                           reverse = TRUE)) +
   labs(title = "Attendance by Discipline",
        subtitle = "CDVS Workshop: quickStart R Part 1",
        caption = "Source: CDVS Workshop Registration",
