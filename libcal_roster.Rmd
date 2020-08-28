@@ -1,7 +1,12 @@
 ---
 title: "Workshop Attendees"
 subtitle: "Produce Roster for printing via Excel ; Visualize Attendance"
-output: html_document
+output: 
+  html_document:
+    fig_width: 10
+    fig_height: 7
+    fig_caption: true
+    dev: "svg"
 date: "`r Sys.Date()`"
 params:
   upload_googlesheets: FALSE  # if you want to upload to google, change this option to TRUE or see https://rmarkdown.rstudio.com/lesson-6.html  ## See more on INTERACTIVE parameters: https://bookdown.org/yihui/rmarkdown/params-knit.html#the-interactive-user-interface
@@ -248,7 +253,7 @@ ggplot(roster2) +
 ```
 
 
-```{r echo=FALSE}
+```{r dev='svg', echo=FALSE}
 roster2 %>% 
   mutate(discipline = fct_lump(discipline, n = 9)) %>% 
   ggplot() +
@@ -262,6 +267,61 @@ roster2 %>%
   guides(fill=guide_legend(title="Status")) +
   labs(title = "Attendance by Discipline")
   
+```
+```
+{r}
+ggsave("who_we_are.svg")
+```
+
+```
+{r}
+library(hrbrthemes)
+hrbrthemes::import_roboto_condensed()
+```
+
+
+```
+{r echo=FALSE, message=FALSE, warning=FALSE, dev='svg'}
+roster2 %>% 
+  mutate(discipline = fct_lump(discipline, n = 9)) %>% 
+  ggplot() +
+  geom_bar(aes(x = fct_rev(discipline), 
+               fill = fct_rev(status))) +
+  coord_flip() +
+  scale_fill_ipsum() +
+  theme_ipsum(grid = "X") +
+  theme(#axis.text.y = element_text(angle = 45),
+        plot.title.position = "plot") +
+  guides(fill=guide_legend(title="Status")) +
+  labs(title = "Attendance by Discipline",
+       subtitle = "CDVS Workshop: quickStart R Part 1",
+       caption = "Source: CDVS Workshop Registration",
+       x = "", y = "")
+ggsave("who_we_are.svg")
+```
+
+
+```
+{r echo=FALSE, fig.height=8, message=FALSE, warning=FALSE, dev='svg'}
+roster2 %>% 
+  mutate(discipline = fct_lump(discipline, n = 9)) %>% 
+  ggplot() +
+  geom_bar(aes(x = fct_rev(discipline), 
+               fill = fct_rev(discipline)),
+           show.legend = FALSE) +
+  facet_wrap(~ status) +
+  coord_flip() +
+  scale_fill_ipsum() +
+  theme_ipsum(grid = "X") +
+  theme(#axis.text.y = element_text(angle = 45),
+        plot.title.position = "plot") +
+  guides(fill=guide_legend(title="Status")) +
+  labs(title = "Attendance by Discipline",
+       subtitle = "CDVS Workshop: quickStart R Part 1",
+       caption = "Source: CDVS Workshop Registration",
+       x = "", y = "")
+
+ggsave("who_we_are_facet.svg")
 ```
 
 
