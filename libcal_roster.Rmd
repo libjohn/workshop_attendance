@@ -296,7 +296,7 @@ roster2 %>%
        subtitle = "CDVS Workshop: quickStart R Part 2",
        caption = "Source: CDVS Workshop Registration",
        x = "", y = "")
-ggsave("C:/Users/jrl/Documents/workshop_rfun_flipped/slides/images/who_we_are2.svg")
+# ggsave("C:/Users/jrl/Documents/workshop_rfun_flipped/slides/images/who_we_are2.svg")
 ```
 
 
