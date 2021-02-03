@@ -273,15 +273,13 @@ roster2 %>%
 ggsave("who_we_are.svg")
 ```
 
-```
-{r}
+```{r}
 library(hrbrthemes)
 hrbrthemes::import_roboto_condensed()
 ```
 
 
-```
-{r echo=FALSE, message=FALSE, warning=FALSE, dev='svg'}
+```{r echo=FALSE, message=FALSE, warning=FALSE, dev='svg'}
 roster2 %>% 
   mutate(discipline = fct_lump(discipline, n = 9)) %>% 
   ggplot() +
@@ -295,10 +293,10 @@ roster2 %>%
   guides(fill=guide_legend(title="Status", 
                            reverse = TRUE)) +
   labs(title = "Attendance by Discipline",
-       subtitle = "CDVS Workshop: quickStart R Part 1",
+       subtitle = "CDVS Workshop: quickStart R Part 2",
        caption = "Source: CDVS Workshop Registration",
        x = "", y = "")
-ggsave("who_we_are.svg")
+ggsave("C:/Users/jrl/Documents/workshop_rfun_flipped/slides/images/who_we_are2.svg")
 ```
 
 
