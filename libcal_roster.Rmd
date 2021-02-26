@@ -74,7 +74,7 @@ full_file_names <- files_table %>%
                     fixed("csv", ignore_case = TRUE))) %>% 
   mutate(reg_data = 
            map(relpath, read_csv, skip = 8)) %>%  # jrl was 9
-  unnest()
+  unnest(cols = c(reg_data))
 ```
 
 ### Workshop Metadata
