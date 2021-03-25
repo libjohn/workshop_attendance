@@ -1,0 +1,43 @@
+---
+title: "R Notebook"
+---
+
+```{r}
+from_zoom <- read_csv("C:/Users/jrl/Downloads/participants_96419102969.csv")
+
+```
+
+
+```{r}
+from_zoom
+```
+
+
+```{r}
+zoom <- from_zoom %>% 
+  mutate(last = str_extract(`Name (Original Name)`, " \\w+$")) %>% 
+  relocate(last) %>% 
+  mutate(last = str_to_lower(last)) %>% 
+  mutate(last = str_trim(last)) %>% 
+  arrange(last)
+zoom
+
+
+```
+
+
+
+```{r}
+goog <- for_goog %>% 
+  mutate(last = str_to_lower(`Last Name`)) %>% 
+  mutate(last = str_trim(last)) %>% 
+  relocate(last)
+goog
+```
+
+
+```{r}
+anti_join(zoom, goog)
+inner_join(goog, zoom)
+```
+
