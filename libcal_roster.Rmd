@@ -293,15 +293,15 @@ roster2 %>%
   guides(fill=guide_legend(title="Status", 
                            reverse = TRUE)) +
   labs(title = "Attendance by Discipline",
-       subtitle = "CDVS Workshop: quickStart R Part 2",
+       subtitle = "CDVS Workshop: quickStart R Part 1",
        caption = "Source: CDVS Workshop Registration",
        x = "", y = "")
-# ggsave("C:/Users/jrl/Documents/workshop_rfun_flipped/slides/images/who_we_are2.svg")
+ggsave("outfile/who_we_are2.svg", device = "svg")
+# ggsave("C:/Users/jrl/Documents/workshop_rfun_flipped/slides/images/who_we_are2.svg", device = "svg")
 ```
 
 
-```
-{r echo=FALSE, fig.height=8, message=FALSE, warning=FALSE, dev='svg'}
+```{r echo=FALSE, fig.height=8, message=FALSE, warning=FALSE, dev='svg'}
 roster2 %>% 
   mutate(discipline = fct_lump(discipline, n = 9)) %>% 
   ggplot() +
@@ -320,7 +320,8 @@ roster2 %>%
        caption = "Source: CDVS Workshop Registration",
        x = "", y = "")
 
-ggsave("who_we_are_facet.svg")
+ggsave("outfile/who_we_are_facet.svg", device = "svg")
+# ggsave("C:/Users/jrl/Documents/workshop_rfun_flipped/slides/images/who_we_are_facet.svg", device = "svg")
 ```
 
 
