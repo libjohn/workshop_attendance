@@ -303,7 +303,7 @@ ggsave("outfile/who_we_are2.svg", device = "svg")
 
 ```{r echo=FALSE, fig.height=8, message=FALSE, warning=FALSE, dev='svg'}
 roster2 %>% 
-  mutate(discipline = fct_lump(discipline, n = 9)) %>% 
+  mutate(discipline = fct_lump(discipline, n = 8)) %>% 
   ggplot() +
   geom_bar(aes(x = fct_rev(discipline), 
                fill = fct_rev(discipline)),
