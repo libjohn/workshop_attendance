@@ -311,6 +311,7 @@ roster2 %>%
   facet_wrap(~ status) +
   coord_flip() +
   scale_fill_ipsum() +
+  scale_y_continuous(breaks = scales::pretty_breaks()) +
   theme_ipsum(grid = "X") +
   theme(#axis.text.y = element_text(angle = 45),
         plot.title.position = "plot") +
