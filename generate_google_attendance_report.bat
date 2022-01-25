@@ -1,0 +1,1 @@
+C:\Users\jrl\Documents\R\R-4.1.2\bin\Rscript.exe -e "rmarkdown::render('attendance_reports.Rmd', params = list(upload_googlesheets = 'TRUE'))"

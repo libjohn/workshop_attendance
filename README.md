@@ -1,27 +1,29 @@
 # README
 
+To generate a workshop roster (CSV), email addresses to be added to marketing systems, and images visualizing registrants by group, and upload libcal registration to CDVS's Google Drive
+
 
 ## Quick Start
 
+BEFORE You START
+
 1. Download your LibCal Registration Data
 
-Run this from the console
-2. **`rmarkdown::render("libcal_roster.Rmd")`**
+### Generate Attendance Roster, email subscriptions, summary images
 
-    - by default this script **will not upload to Google Drive**
-    - the script will prompt you to find the file(s) on your local file system (step 1)
+1. From Windows-Explorer, double-click `generate_subscribers_and_roster_plus_htmlReport.bat` ; pick an attendance file
+2. Look in the output directory for reports
 
+### upload to Google Drive
 
-Alternatively, To **upload the GoogleSheet** to Google Drive, run the following from the R console:
-
-A. `rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))`
-
-### Attendance Sheet
-
-You must first download the registration file from SpringShare > LibCal > *your event* >  Manage Event > Excel
+1. From Windows-Explorer, double-click `generate_google_attendance_report.bat` ; pick an attendance file
+2. Look in your Google Drive home directory ; manually move to the CDVS workshop attendance folder for the proper year
 
 
 ## Outputs
+
+Fine outputs in the `output directory`.  
+See Also:  attendance_reports.html
 
 - **Roster** for Attendance that can be printed via MS Excel
 - **visualization** that summarizes the registrees (printable)
@@ -48,45 +50,6 @@ There are two goals: transform and automate attendance file movement.
     - User data on your personal machine is your responsibility
     - User data in the GoogleSheet is protected by the Google Drive permissions that you have set
 
-
-## Step By Step Directions
-
-### Make a `data` and `outfile` subdirectory 
-
-1. Clone this repository as a new project in RStudio
-1. Download your Springshare registration data 
-1. Run this script in the R Console
-
-    - `rmarkdown::render("libcal_roster.Rmd")`
-    - You will be prompted to find the downloaded roster
-    - The default will not upload to Google
-    
-        - To Upload to Google...   `rmarkdown::render("libcal_roster.Rmd", params = list(upload_googlesheets = "TRUE"))`
-
-
-### Where to Find the Outputs
-
-- Roster is in the `outfile` directory
-    
-    - Open in Excel:  `attendance-roster.csv`
-    - Use Excel to **Format Tables** 
-    - Use Excel Print functions
-    
-        - Change to Landscape 
-        - Scale all columns to one page in the 
-    
-- Visualization will be in the RStudio project root (workshop_attendance), as libcal_roster.nb.html.  Just print the selected page
-
-- Email List is in the `outfile` directory
-
-    - `dvs-announce_append-email.txt`
-    - This list is possible because we prompt patrons for this during the springshare registration process
-
-- Google Sheet will be in your Google Drive main folder.
-
-    - First time user will have to monitor the R Console for messages about authentication
-    
-## foo    
 
 
 
