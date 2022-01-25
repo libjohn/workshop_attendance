@@ -3,7 +3,12 @@ title: "R Notebook"
 ---
 
 ```{r}
-from_zoom <- read_csv("C:/Users/jrl/Downloads/participants_96419102969.csv")
+library(tidyverse)
+```
+
+
+```{r}
+from_zoom <- read_csv("C:/Users/jrl/Downloads/participants_91769451613.csv")
 
 ```
 
@@ -25,11 +30,15 @@ zoom
 
 ```
 
+```{r}
+for_goog <- read_csv("output/attendance_upload/attendance-roster.csv", skip = 8)
+```
+
 
 
 ```{r}
 goog <- for_goog %>% 
-  mutate(last = str_to_lower(`Last Name`)) %>% 
+  mutate(last = str_to_lower(last_name)) %>% 
   mutate(last = str_trim(last)) %>% 
   relocate(last)
 goog
@@ -37,6 +46,7 @@ goog
 
 
 ```{r}
+inner_join(goog, zoom)
 anti_join(zoom, goog)
 inner_join(goog, zoom)
 ```
