@@ -313,9 +313,11 @@ names(my_df) <- temp_df_names
 my_df <- bind_rows(attendance_headers, my_df) 
 
 my_df <- my_df %>% 
-  fill(c(`Workshop Date`, `Workshop Name` , WorkshopID), .direction = "down") %>% 
+  # fill(c(`Workshop Date`, `Workshop Name` , WorkshopID), .direction = "down") %>% 
+  fill(c(`Workshop Name`), .direction = "down") %>% 
+  drop_na(Attendance) %>%
   mutate(WorkshopID = registered_df$wid[1]) %>% 
-  drop_na(Attendance) %>% 
+  mutate(`Workshop Date` =  workshop_date$date) %>% 
   arrange(`Last Name`)
 ```
 
