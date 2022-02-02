@@ -77,10 +77,6 @@ my_df <- my_df %>%
 
 ```{r}
 attendance_headers <- read_csv("config/cdvs_workshop_attendance_headers.csv")
-attendance_headers_names <- names(attendance_headers)
-# attendance_headers_names
-# glue::glue_collapse(rep("=", 20))
-# names(my_df)
 ```
 
 ```{r}
@@ -292,10 +288,6 @@ my_df %>%
 ## Attendance for Google
 
 ```{r}
-# attendance_headers_names
-# glue::glue_collapse(rep("=", 20))
-# names(my_df)
-
 temp_df_names <- attendance_headers %>% 
   select(`First Name`, `Last Name`, Email, `Booking Made`, `Registration Type`, Attendance, ,
          `Are you affiliated with Duke University, Duke Medical Center, DCRI, or another Duke group?`,
@@ -313,11 +305,10 @@ names(my_df) <- temp_df_names
 my_df <- bind_rows(attendance_headers, my_df) 
 
 my_df <- my_df %>% 
-  # fill(c(`Workshop Date`, `Workshop Name` , WorkshopID), .direction = "down") %>% 
-  fill(c(`Workshop Name`), .direction = "down") %>% 
   drop_na(Attendance) %>%
   mutate(WorkshopID = registered_df$wid[1]) %>% 
   mutate(`Workshop Date` =  workshop_date$date) %>% 
+  mutate(`Workshop Name` = workshop_title) %>% 
   arrange(`Last Name`)
 ```
 
