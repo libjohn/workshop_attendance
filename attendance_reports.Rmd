@@ -259,19 +259,19 @@ workshop_metadata %>%
   write_excel_csv("output/attendance_upload/attendance-roster.csv", col_names = FALSE)
 
 # append the Roster tibble 
-write_excel_csv(my_df %>% 
-                  mutate(Attendance = "", .before = first_name) %>% 
-                  arrange(last_name) %>% 
-                  select(last_name, first_name, email,
-                         affiliated = x1_are_you_affiliated_with_duke_university_duke_medical_center_dcri_or_another_duke_group, 
-                         status = x2_academic_status_or_other, 
-                         discipline = x3_discipline_or_affiliation,
-                         email_list = x7_would_you_like_to_receive_more_information_about_cdvs_events_and_training) %>% 
-                  bind_rows(example_df) %>% 
-                  select(Attendance, everything()) %>% 
-                  arrange(desc(Attendance)) %>% 
-                  mutate(Attendance = if_else(is.na(Attendance), "", Attendance)),
-                "output/attendance_upload/attendance-roster.csv", append = TRUE, col_names = TRUE)
+write_csv(my_df %>% 
+            mutate(Attendance = "", .before = first_name) %>% 
+            arrange(last_name) %>% 
+            select(last_name, first_name, email,
+                   affiliated = x1_are_you_affiliated_with_duke_university_duke_medical_center_dcri_or_another_duke_group, 
+                   status = x2_academic_status_or_other, 
+                   discipline = x3_discipline_or_affiliation,
+                   email_list = x7_would_you_like_to_receive_more_information_about_cdvs_events_and_training) %>% 
+            bind_rows(example_df) %>% 
+            select(Attendance, everything()) %>% 
+            arrange(desc(Attendance)) %>% 
+            mutate(Attendance = if_else(is.na(Attendance), "", Attendance)),
+          "output/attendance_upload/attendance-roster.csv", append = TRUE, col_names = TRUE)
 
 ```
 
