@@ -1,0 +1,52 @@
+---
+title: "generate email lists for pre-workshop notice"
+---
+
+first.  separate output/attendance_upload/attendance-rostere.csv into part_one.csv and part_two.csv
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+partone <- read_csv("output/attendance_upload/part_one.csv", skip = 8, id = "path")
+parttwo <- read_csv("output/attendance_upload/part_two.csv", skip = 8, id = "path")
+```
+
+```{r}
+big_df <- bind_rows(partone, parttwo)
+big_df <- big_df %>% 
+  mutate(session = fs::path_ext_remove(path)) %>% 
+  relocate(session) %>% 
+  select(-path)
+big_df
+```
+```{r}
+big_df %>% 
+  filter(is.na(Attendance)) %>% 
+  select(session, email)
+
+both <- big_df %>% 
+  filter(is.na(Attendance)) %>% 
+  select(session, email) %>% 
+  count(email) %>% 
+  filter(n > 1)
+both %>% select(email) %>% write_csv("output/attendance_upload/both.csv")
+
+only_one <- big_df %>% 
+  filter(is.na(Attendance)) %>% 
+  select(session, email) %>% 
+  filter(str_detect(session, "part_one")) %>% 
+  anti_join(parttwo)
+only_one %>% select(email) %>% write_csv("output/attendance_upload/only_one.csv")
+
+
+only_two <- big_df %>% 
+  filter(is.na(Attendance)) %>% 
+  select(session, email) %>% 
+  filter(str_detect(session, "part_two")) %>% 
+  anti_join(partone)
+only_two %>% select(email) %>% write_csv("output/attendance_upload/only_two.csv")
+
+```
+
