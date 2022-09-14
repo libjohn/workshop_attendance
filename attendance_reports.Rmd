@@ -140,7 +140,8 @@ my_df %>%
   scale_x_discrete(label=function(x) abbreviate(x, minlength=10, method = "both.sides", use.classes = TRUE)) +
   coord_flip() +
   scale_fill_ipsum() +
-  facet_wrap(~ fct_infreq(x2_academic_status_or_other)) +
+  facet_wrap(~ fct_infreq(x2_academic_status_or_other), 
+             nrow = 2) +
   theme_ipsum(grid = "X") +
   theme(plot.title.position = "plot") +
   labs(fill = "Academic status", x = "", y = "",
