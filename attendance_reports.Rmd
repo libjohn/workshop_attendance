@@ -135,11 +135,15 @@ ggsave(str_glue("output/images/",  "who_we_are_",
 my_df %>% 
   mutate(x3_discipline_or_affiliation = fct_rev(fct_infreq(x3_discipline_or_affiliation))) %>% 
   mutate(x3_discipline_or_affiliation = fct_lump_min(x3_discipline_or_affiliation, 3, other_level = "Other / None")) %>% 
-  ggplot(aes(x3_discipline_or_affiliation, fill = fct_rev(fct_infreq(x3_discipline_or_affiliation)))) +
+  ggplot(aes(x3_discipline_or_affiliation, fill = 
+               fct_rev(
+                 fct_infreq(
+                   x3_discipline_or_affiliation)))) +
   geom_bar(show.legend = FALSE) +
   scale_x_discrete(label=function(x) abbreviate(x, minlength=10, method = "both.sides", use.classes = TRUE)) +
   coord_flip() +
-  scale_fill_ipsum() +
+  # scale_fill_ipsum() +
+  scale_fill_brewer(palette = "Paired") +
   facet_wrap(~ fct_infreq(x2_academic_status_or_other), 
              nrow = 2) +
   theme_ipsum(grid = "X") +
