@@ -12,9 +12,13 @@ BEFORE You START
 ### Generate Attendance Roster, email subscriptions, summary images
 
 1. At RStudio Terminal (or CLI command prompt type, e.g. Windows PowerShell)
-        - `quarto render ./attendance_reports.qmd -P generate_email_subscribers:TRUE -P generate_print_roster:TRUE`
+        - `quarto render ./attendance_reports.qmd -P generate_email_subscribers:true -P generate_print_roster:true`
         - or
-        - `quarto render ./attendance_reports.qmd -P upload_googlesheets:TRUE`
+        - `quarto render ./attendance_reports.qmd -P upload_googlesheets:true`
+        - or
+        - `quarto render ./attendance_reports.qmd -P generate_images:true`
+        - my favorite
+        - `quarto render ./attendance_reports.qmd -P generate_email_subscribers:true -P upload_googlesheets:true`
     - see bottom of this README for tips on quarto cli
 2. Look in the output directory for reports
 

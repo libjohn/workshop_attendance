@@ -9,10 +9,10 @@ output:
     dev: "svg"
 date: today
 params:
-  upload_googlesheets: FALSE 
-  generate_images: FALSE
-  generate_email_subscribers: FALSE
-  generate_print_roster: FALSE
+  upload_googlesheets: false 
+  generate_images: false
+  generate_email_subscribers: false
+  generate_print_roster: false
 ---
 
 ## How to Run
@@ -108,12 +108,12 @@ my_df %>%
   count(x3_discipline_or_affiliation, sort = TRUE) %>% 
   gt()
 ```
+
 ```{r}
 #| label: attendance-by-discipline
 #| message: false
 #| warning: false
 
-# vestigial code for generating a plot
 my_df %>% 
   mutate(x3_discipline_or_affiliation = fct_rev(fct_infreq(x3_discipline_or_affiliation))) %>% 
   mutate(x3_discipline_or_affiliation = fct_lump_min(x3_discipline_or_affiliation, 3, other_level = "Other / None")) %>% 
@@ -134,9 +134,7 @@ my_df %>%
 
 ```{r}
 #| label: save-figure-attendance-by-discipline
-#| eval: !expr params$eval_code
-
-#vestige: eval=params$generate_images
+#| eval: !expr params$generate_images
 
 ggsave(str_glue("output/images/",  "who_we_are_", 
                 {as.character(workshop_date %>% pull(date))}, 
@@ -178,11 +176,7 @@ my_df %>%
 
 ```{r}
 #| label: save-figure
-#| eval: !expr params$eval_code
-
-
-# vestige from Rmd: save figure: facetwrap attendance by discipline, evale=params$generate_images
-# ^^ probably not needed.  commented out on Jan. 23, 2024
+#| eval: !expr params$generate_images
 
 ggsave(str_glue("output/images/",  "who_we_are_facetwrap_", 
                 {as.character(workshop_date %>% pull(date))}, 
@@ -274,12 +268,7 @@ my_df %>%
 
 ```{r}
 #| label: write-roster
-#| eval: !expr params$eval_code
-
-
-# vestige from Rmd: eval=params$generate_print_roster
-# eval: params$generate_print_roster
-
+#| eval: !expr params$generate_print_roster
 
 example_df <- tibble(
   Attendance = "X",
@@ -317,10 +306,7 @@ write_csv(my_df %>%
 
 ```{r}
 #| label: email-subscribers
-#| eval: !expr params$eval_code
-
-
-# vestige from Rmd: eval=params$generate_email_subscribers
+#| eval: !expr params$generate_email_subscribers
 
 my_df %>% 
   filter(x7_would_you_like_to_receive_more_information_about_cdvs_events_and_training == "Yes") %>% 
@@ -358,18 +344,7 @@ my_df <- my_df %>%
 
 ```{r}
 #| label: upload-googlesheets
-#| eval: !expr params$eval_code
-
-
-# vestige from Rmd: eval=params$upload_googlesheets
-
-
-# goog_file_title <- my_df %>% 
-#   slice_head(n = 1) %>% 
-#   select(`Workshop Name`) %>% 
-#   # mutate(`Workshop Name` = str_remove_all(`Workshop Name`, "[:symbol:]|[:punct:]")) %>% 
-#   pull(`Workshop Name`)
-# goog_file_title
+#| eval: !expr params$upload_googlesheets
 
 googlesheets4::gs4_create(workshop_title, sheets = my_df)
 ```
