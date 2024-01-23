@@ -1,0 +1,35 @@
+---
+title: "test params"
+author: "jl"
+format: html
+
+params:
+  show_code: FALSE
+  show_plot: FALSE
+  eval_code: FALSE
+  
+  
+editor: visual
+---
+
+
+
+```{r}
+#| echo: !expr params$show_code
+#| eval: !expr params$eval_code
+
+summary(cars)
+```
+
+```{r}
+#| eval: !expr params$eval_code
+#| include: !expr params$show_plot
+
+plot(pressure)
+```
+
+
+
+quarto render .\delme_test_cli_params.qmd -P show_code:true -P show_plot:true -P eval_code:false
+
+ eval_code:true

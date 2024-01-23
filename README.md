@@ -11,7 +11,11 @@ BEFORE You START
 
 ### Generate Attendance Roster, email subscriptions, summary images
 
-1. From Windows-Explorer, double-click `generate_subscribers_and_roster_plus_htmlReport.bat` ; pick an attendance file
+1. At RStudio Terminal (or CLI command prompt type, e.g. Windows PowerShell)
+        - `quarto render ./attendance_reports.qmd -P generate_email_subscribers:TRUE -P generate_print_roster:TRUE`
+        - or
+        - `quarto render ./attendance_reports.qmd -P upload_googlesheets:TRUE`
+    - see bottom of this README for tips on quarto cli
 2. Look in the output directory for reports
 
 ### upload to Google Drive
@@ -41,6 +45,10 @@ There are two goals: transform and automate attendance file movement.
 2. Transform the Springshare-registration data into a format which Joel requested for deposit in Google Drive.  Script will upload transformed data frame to Google Drive as a Google Sheet
 
 > libcal --> RStudio --> GoogleDrive
+
+## Quarto cli
+
+See [quarto documentation](https://quarto.org/docs/computations/parameters.html#rendering) for some tips on Quarto Command Line Interface.  In John's case, I'm using PowerShell version 7 (as of January 2024) to run this as the CLI.
 
 ## Assumptions:
 

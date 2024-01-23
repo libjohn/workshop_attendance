@@ -1,0 +1,378 @@
+---
+title: "Workshop Attendees"
+subtitle: "Produce Roster for printing via Excel ; Visualize Attendance"
+output: 
+  html:
+    fig_width: 10
+    fig_height: 7
+    fig_caption: true
+    dev: "svg"
+date: today
+params:
+  upload_googlesheets: FALSE 
+  generate_images: FALSE
+  generate_email_subscribers: FALSE
+  generate_print_roster: FALSE
+---
+
+## How to Run
+
+
+To generate a workshop roster (CSV), email addresses to be added to marketing systems, and images visualizing registrants by group
+
+- From Windows-Explorer, double-click update_attendance.Rmd ; pick an attendance file
+- Look in the output directory for reports
+
+To upload the attendance data into Google Drive
+
+- From Windows-Explorer, double-click update_attendance.Rmd ; pick an attendance file
+- Look in your Google Drive home directory ; manually move to the CDVS workshop attendance folder for the proper year
+
+
+
+## Libraries, packages, set-up, ingest data, wrangle.
+
+```{r}
+#| label: libraries
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(hrbrthemes)
+library(googlesheets4)
+library(fs)
+library(gt)
+```
+
+```{r}
+registered_df <- tibble(path_rel(choose.files())) %>% 
+  rename(filepath = 1)
+registered_df <- registered_df %>% 
+  mutate(registration_status = case_when(
+    str_detect(filepath, "attendees") ~ "Registered",
+    str_detect(filepath, "wait_list") ~ "Waitlist"
+  )) %>% 
+  mutate(wid = str_extract(filepath, "(?<=(attendees|list)_)\\d+(?=_\\d+)"))
+
+my_df <- read_csv(registered_df$filepath[1], skip = 9)
+
+workshop_metadata <- read_csv(registered_df$filepath, col_names = FALSE, n_max = 7) %>% 
+  separate(X1, into = c("var", "val") , sep = ",", extra = "merge") %>% 
+  mutate(val = str_remove_all(val, '"'))
+
+workshop_title <- workshop_metadata %>% 
+  filter(var == "Event") %>% 
+  pull(val)
+
+workshop_date <- workshop_metadata %>% 
+  filter(var == "Date & Time") %>% 
+  separate(val, into = c("time", "day", "month_day", "year"), sep = ",") %>% 
+  unite("date", month_day:year, sep = ", ") %>% 
+  mutate(date = str_trim(date)) %>% 
+  mutate(date = clock::date_parse(date, format = "%B %d, %Y"))
+
+my_df <- my_df %>% 
+  janitor::clean_names() 
+my_df <- my_df %>% 
+  filter(str_detect(x2_academic_status_or_other, regex("graduate|staff|post|faculty|other", ignore_case = TRUE))) %>% 
+  mutate(registration_status = registered_df$registration_status[1])
+```
+
+```{r}
+attendance_headers <- read_csv("config/cdvs_workshop_attendance_headers.csv")
+```
+
+```{r}
+dir_create("output/attendance_upload")
+dir_create("output/email_subscriptions")
+dir_create("output/images")
+```
+
+
+## Reports & Viz
+
+### Academic status
+
+
+```{r}
+my_df %>% 
+  count(x2_academic_status_or_other, sort = TRUE) %>% 
+  gt()
+```
+
+### Departmental affiliations
+
+```{r}
+my_df %>% 
+  # group_by(x2_academic_status_or_other) %>% 
+  count(x3_discipline_or_affiliation, sort = TRUE) %>% 
+  gt()
+```
+```{r}
+#| label: attendance-by-discipline
+#| message: false
+#| warning: false
+
+# vestigial code for generating a plot
+my_df %>% 
+  mutate(x3_discipline_or_affiliation = fct_rev(fct_infreq(x3_discipline_or_affiliation))) %>% 
+  mutate(x3_discipline_or_affiliation = fct_lump_min(x3_discipline_or_affiliation, 3, other_level = "Other / None")) %>% 
+  ggplot(aes(x3_discipline_or_affiliation, fill = fct_rev(fct_infreq(x2_academic_status_or_other)))) +
+  geom_bar() +
+  scale_x_discrete(label=function(x) abbreviate(x, minlength=10, method = "both.sides", use.classes = TRUE)) +
+  coord_flip() +
+  scale_fill_ipsum() +
+  theme_ipsum(grid = "X") +
+  theme(plot.title.position = "plot") +
+  labs(fill = "Academic status", x = "", y = "",
+       title = "Attendance by Discipline",
+       subtitle = str_glue("{workshop_title}"),
+       caption = "Source: CDVS Workshop Registration") + 
+  guides(fill = guide_legend(reverse=TRUE))
+```
+
+
+```{r}
+#| label: save-figure-attendance-by-discipline
+#| eval: !expr params$eval_code
+
+#vestige: eval=params$generate_images
+
+ggsave(str_glue("output/images/",  "who_we_are_", 
+                {as.character(workshop_date %>% pull(date))}, 
+                "_", {Sys.getpid()}, ".svg"), 
+       device = "svg", width = 10, height = 6)
+```
+
+```{r}
+#| label: attendance-by-discipline-facetwrap
+#| warning: false
+#| message: false
+
+
+my_df %>% 
+  mutate(x3_discipline_or_affiliation = fct_rev(fct_infreq(x3_discipline_or_affiliation))) %>% 
+  mutate(x3_discipline_or_affiliation = fct_lump_min(x3_discipline_or_affiliation, 3, other_level = "Other / None")) %>% 
+  ggplot(aes(x3_discipline_or_affiliation, fill = 
+               fct_rev(
+                 fct_infreq(
+                   x3_discipline_or_affiliation)))) +
+  geom_bar(show.legend = FALSE) +
+  scale_x_discrete(label=function(x) abbreviate(x, minlength=10, method = "both.sides", use.classes = TRUE)) +
+  coord_flip() +
+  # scale_fill_ipsum() +
+  scale_fill_brewer(palette = "Paired") +
+  facet_wrap(~ fct_infreq(x2_academic_status_or_other), 
+             nrow = 2) +
+  theme_ipsum(grid = "X") +
+  theme(plot.title.position = "plot") +
+  labs(fill = "Academic status", x = "", y = "",
+       title = "Attendance by Discipline",
+       subtitle = str_glue("{workshop_title}"),
+       caption = "Source: CDVS Workshop Registration") + 
+  guides(fill = guide_legend(reverse=TRUE))
+
+
+```
+
+
+```{r}
+#| label: save-figure
+#| eval: !expr params$eval_code
+
+
+# vestige from Rmd: save figure: facetwrap attendance by discipline, evale=params$generate_images
+# ^^ probably not needed.  commented out on Jan. 23, 2024
+
+ggsave(str_glue("output/images/",  "who_we_are_facetwrap_", 
+                {as.character(workshop_date %>% pull(date))}, 
+                "_", {Sys.getpid()}, ".svg"), 
+       device = "svg", width = 10, height = 6)
+```
+
+### Duke Affiliation?
+
+```{r}
+# glimpse(my_df)
+my_df %>% 
+  count(x1_are_you_affiliated_with_duke_university_duke_medical_center_dcri_or_another_duke_group, sort = TRUE) %>% 
+  gt()
+```
+
+Email addresses of non-duke affiliates
+
+```{r}
+my_df %>% 
+  filter(x1_are_you_affiliated_with_duke_university_duke_medical_center_dcri_or_another_duke_group == "No") %>% 
+  select(email, x2_academic_status_or_other, x3_discipline_or_affiliation, x4_institutes_initiatives_or_program_affiliation) %>% 
+  gt()
+```
+
+Email addresses of non-duke affiliates with duke email addresses. What-the?
+
+```{r}
+my_df %>% 
+  filter(x1_are_you_affiliated_with_duke_university_duke_medical_center_dcri_or_another_duke_group == "No") %>% 
+  select(email, x2_academic_status_or_other, x3_discipline_or_affiliation, x4_institutes_initiatives_or_program_affiliation) %>% 
+  filter(str_detect(email, regex("duke", ignore_case = TRUE))) %>% 
+  gt()
+```
+
+### Institutes
+
+```{r}
+my_df %>% 
+  count(x4_institutes_initiatives_or_program_affiliation, sort = TRUE) %>% 
+  gt()
+```
+
+### Advertising source / word-of-mouth 
+
+```{r}
+my_df %>% 
+  count(x5_where_did_you_hear_about_this_event, sort = TRUE)
+```
+
+## CDVS loyalist
+
+```{r}
+my_df %>% 
+  count(x6_have_you_consulted_with_the_center_for_data_and_visualization_sciences_before_this_workshop, sort = TRUE) %>% 
+  gt()
+```
+
+### Added to email list?
+
+```{r}
+my_df %>% 
+  count(x7_would_you_like_to_receive_more_information_about_cdvs_events_and_training) %>% 
+  gt()
+```
+
+### Survey
+
+```{r}
+my_df %>% 
+  count(x8_im_interested_in_registering_for_this_workshop_because, sort = TRUE) %>% 
+  gt()
+```
+
+```{r}
+my_df %>% 
+  count(x8_im_interested_in_registering_for_this_workshop_because, sort = TRUE) %>% 
+  filter(x8_im_interested_in_registering_for_this_workshop_because != "-") %>% 
+  separate_rows(x8_im_interested_in_registering_for_this_workshop_because, sep = ",") %>% 
+  mutate(x8_im_interested_in_registering_for_this_workshop_because =
+           str_trim(x8_im_interested_in_registering_for_this_workshop_because)) %>% 
+  ggplot(aes(fct_rev(fct_infreq(x8_im_interested_in_registering_for_this_workshop_because)))) +
+  geom_bar() +
+  coord_flip()
+```
+
+
+## Create print roster
+
+```{r}
+#| label: write-roster
+#| eval: !expr params$eval_code
+
+
+# vestige from Rmd: eval=params$generate_print_roster
+# eval: params$generate_print_roster
+
+
+example_df <- tibble(
+  Attendance = "X",
+  last_name = "CHIGURH", 
+  first_name = "ANTON", 
+  email = "cipher@cloud.net", 
+  affiliated = "EXAMPLE",
+  status = "EXAMPLE", 
+  discipline = "EXAMPLE")
+
+
+# Create attendance CSV file
+workshop_metadata %>% 
+  add_row(var = "----", val = "----") %>% 
+  write_excel_csv("output/attendance_upload/attendance-roster.csv", col_names = FALSE)
+
+# append the Roster tibble 
+write_csv(my_df %>% 
+            mutate(Attendance = "", .before = first_name) %>% 
+            arrange(last_name) %>% 
+            select(last_name, first_name, email,
+                   affiliated = x1_are_you_affiliated_with_duke_university_duke_medical_center_dcri_or_another_duke_group, 
+                   status = x2_academic_status_or_other, 
+                   discipline = x3_discipline_or_affiliation,
+                   email_list = x7_would_you_like_to_receive_more_information_about_cdvs_events_and_training) %>% 
+            bind_rows(example_df) %>% 
+            select(Attendance, everything()) %>% 
+            arrange(desc(Attendance)) %>% 
+            mutate(Attendance = if_else(is.na(Attendance), "", Attendance)),
+          "output/attendance_upload/attendance-roster.csv", append = TRUE, col_names = TRUE)
+
+```
+
+## Mailing list
+
+```{r}
+#| label: email-subscribers
+#| eval: !expr params$eval_code
+
+
+# vestige from Rmd: eval=params$generate_email_subscribers
+
+my_df %>% 
+  filter(x7_would_you_like_to_receive_more_information_about_cdvs_events_and_training == "Yes") %>% 
+  arrange(email) %>% 
+  select(email) %>% 
+  write_csv("output/email_subscriptions/emails_2_update_lists.csv"  , col_names = FALSE)
+```
+
+## Attendance for Google
+
+```{r}
+temp_df_names <- attendance_headers %>% 
+  select(`First Name`, `Last Name`, Email, `Booking Made`, `Registration Type`, Attendance, ,
+         `Are you affiliated with Duke University, Duke Medical Center, DCRI, or another Duke group?`,
+         `Academic Status (or other)`, `Discipline or Affiliation`, 
+         `Institutes, Initiatives, or Program Affiliation`, `Where did you hear about this event?`,
+         `Have you consulted with Data and Visualization Services before this workshop?`,
+         `Would you like to receive more information about DVS events and training?`,
+         `I'm interested in registering for this workshop because:`,
+         `If other, describe below:`,
+         `Registration Status (Registered, Waitlist, or Walk-in)`) %>% 
+  names()
+
+names(my_df) <- temp_df_names
+
+my_df <- bind_rows(attendance_headers, my_df) 
+
+my_df <- my_df %>% 
+  drop_na(Attendance) %>%
+  mutate(WorkshopID = registered_df$wid[1]) %>% 
+  mutate(`Workshop Date` =  workshop_date$date) %>% 
+  mutate(`Workshop Name` = workshop_title) %>% 
+  arrange(`Last Name`)
+```
+
+```{r}
+#| label: upload-googlesheets
+#| eval: !expr params$eval_code
+
+
+# vestige from Rmd: eval=params$upload_googlesheets
+
+
+# goog_file_title <- my_df %>% 
+#   slice_head(n = 1) %>% 
+#   select(`Workshop Name`) %>% 
+#   # mutate(`Workshop Name` = str_remove_all(`Workshop Name`, "[:symbol:]|[:punct:]")) %>% 
+#   pull(`Workshop Name`)
+# goog_file_title
+
+googlesheets4::gs4_create(workshop_title, sheets = my_df)
+```
+
+
+
