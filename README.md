@@ -48,9 +48,7 @@ There are three goals: transform and automate registration data for attendance t
 
 2. Generate a pre-workshop report showing basic demographics (See:  `attendance_reports.html`)
 
-3. Upload the transformed data to Google Drive as a Google Sheet (See _Quickstart_, above)
-
-2. ~~Transform the Springshare-registration data into a format which Joel requested for deposit in Google Drive.  Script will upload transformed data frame to Google Drive as a Google Sheet~~
+3. Upload the transformed registration data to CDVS's Google Drive.  Attendance data is kept on Google Drive.  (See _Quickstart_, above)
 
 
 
