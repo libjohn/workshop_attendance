@@ -30,11 +30,11 @@ BEFORE You START
 
 ## Outputs
 
-Fine outputs in the `output directory`.  
+Find outputs in the `output directory`.  
 See Also:  attendance_reports.html
 
 - **Roster** for Attendance that can be printed via MS Excel
-- **visualization** that summarizes the registrees (printable)
+- **visualization** that summarizes the registrants (printable)
 - GoogleSheet -- Transformed roster that is uploaded to Google Drive as a Sheet
 - **Email List of Newbies** -- list of people who want to be subscribed to the mailing lists
 
@@ -42,11 +42,17 @@ See Also:  attendance_reports.html
 
 These scripts transform springshare libcal registration data.
 
-There are two goals: transform and automate attendance file movement.
+There are three goals: transform and automate registration data for attendance tracking.
 
-1. Transform the Springshare-registration data to produce a paper roster that can be used to track workshop attendance.
+1. Transform the Springshare-registration data to produce a paper roster that can be used to track workshop attendance.  (see:  `output/atendance_upload/attendance-roster.csv`)
 
-2. Transform the Springshare-registration data into a format which Joel requested for deposit in Google Drive.  Script will upload transformed data frame to Google Drive as a Google Sheet
+2. Generate a pre-workshop report showing basic demographics (See:  `attendance_reports.html`)
+
+3. Upload the transformed data to Google Drive as a Google Sheet (See _Quickstart_, above)
+
+2. ~~Transform the Springshare-registration data into a format which Joel requested for deposit in Google Drive.  Script will upload transformed data frame to Google Drive as a Google Sheet~~
+
+
 
 > libcal --> RStudio --> GoogleDrive
 
