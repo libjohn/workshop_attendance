@@ -62,8 +62,8 @@ workshop_title <- workshop_metadata %>%
   pull(val)
 
 workshop_date <- workshop_metadata %>% 
-  filter(var == "Date & Time") %>% 
-  separate(val, into = c("time", "day", "month_day", "year"), sep = ",") %>% 
+  filter(var == "From") %>% 
+  separate(val, into = c("time", "month_day", "year"), sep = ",") %>% 
   unite("date", month_day:year, sep = ", ") %>% 
   mutate(date = str_trim(date)) %>% 
   mutate(date = clock::date_parse(date, format = "%B %d, %Y"))
