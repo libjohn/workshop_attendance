@@ -24,7 +24,7 @@ BEFORE You START
 
 ### upload to Google Drive
 
-1. From Windows-Explorer, double-click `generate_google_attendance_report.bat` ; pick an attendance file
+1. ~~From Windows-Explorer, double-click `generate_google_attendance_report.bat` ; pick an attendance file~~
 2. Look in your Google Drive home directory ; manually move to the CDVS workshop attendance folder for the proper year
 
 
