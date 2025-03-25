@@ -1,0 +1,46 @@
+---
+title: "Untitled"
+format: pdf
+editor: visual
+---
+
+## test
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+foo1 <- workshop_metadata %>% 
+  add_row(var = "----", val = "----")
+
+foo2 <- my_df %>% 
+            mutate(Attendance = "", .before = first_name) %>% 
+            arrange(last_name) %>% 
+            select(last_name, first_name, email,
+                   affiliated = x1_are_you_affiliated_with_duke_university_duke_medical_center_dcri_or_another_duke_group, 
+                   status = x2_academic_status_or_other, 
+                   discipline = x3_discipline_or_affiliation,
+                   email_list = x7_would_you_like_to_receive_more_information_about_cdvs_events_and_training) %>% 
+            bind_rows(example_df) %>% 
+            select(Attendance, everything()) %>% 
+            arrange(desc(Attendance)) %>% 
+            mutate(Attendance = if_else(is.na(Attendance), "", Attendance))
+
+foo1 |> 
+  drop_na(val) %>%
+  gt()  %>%
+  tab_options(column_labels.hidden = TRUE)
+
+foo2 |> 
+  gt() %>%
+  tab_options(table.width = pct(100)) |> 
+  opt_row_striping(row_striping = TRUE) %>%
+  tab_style(
+    style = cell_fill(color = "grey90"),
+    locations = cells_body(rows = seq(2, nrow(foo2), 2))
+  )
+
+
+```

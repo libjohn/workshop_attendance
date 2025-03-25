@@ -24,13 +24,14 @@ BEFORE You START
 
 ### upload to Google Drive
 
-1. ~~From Windows-Explorer, double-click `generate_google_attendance_report.bat` ; pick an attendance file~~
+1. Actually, the `-P upload_googlesheets:true` argument (above) will work.  
+OR
 2. Look in your Google Drive home directory ; manually move to the CDVS workshop attendance folder for the proper year
 
 
 ## Outputs
 
-Find outputs in the `output directory`.  
+Find outputs in the `output` directory of this project.  
 See Also:  attendance_reports.html
 
 - **Roster** for Attendance that can be printed via MS Excel

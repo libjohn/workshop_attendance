@@ -18,6 +18,9 @@ output/*
 *.doc
 *.html
 delete.md
+delete.qmd
+attendance_reports_files/*
+
 
 # Example code in package build process
 *-Ex.R
